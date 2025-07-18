@@ -1,0 +1,10 @@
+{
+  "csv_analysis": {
+    "file": "csv_analysis.j2",
+    "variables": ["input_filename", "sample", "columns", "unique_counts", "corr_matrix"]
+  },
+  "sql_analysis": {
+    "file": "sql_analysis.j2",
+    "variables": ["schema_description", "nb_items", "types_str"]
+  }
+}

@@ -1,0 +1,8 @@
+# ignore the __pycache__ directory
+__pycache__/
+# ignore all .pyc files
+*.pyc   
+# ignore all test directories
+tests/
+# ignore all data directories
+data/
