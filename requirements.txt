@@ -1,0 +1,11 @@
+pandas 
+sklearn
+boto3
+elasticsearch
+jinja2
+python-multipart
+sqlalchemy
+psycopg2-binary
+pydantic[email]
+passlib
+requests
