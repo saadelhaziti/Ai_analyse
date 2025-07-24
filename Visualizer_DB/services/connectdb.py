@@ -1,5 +1,5 @@
 import psycopg2
-from modeles.db_credentials import DBCredentials
+from Models.db_credentials import DBCredentials
 
 def try_connect_db(credentials: DBCredentials):
     # Fonction technique qui tente juste la connexion

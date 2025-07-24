@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 from DB_Save.Models_save.Minio_forma_save import Froma_Minio
 from Visualizer_DB.services.generateLLMprompt import generate_llm_prompt_from_credentials
-from Visualizer_DB.services.credentails import DBCredentials
+from Models.db_credentials import DBCredentials
 from Visualizer_DB.services.generationJSON import generate_json_via_llm
 import os, json, io
 from DB_Save.controller.Minio_controller import POST_file_in_Minio
