@@ -11,3 +11,12 @@ pydantic[email]
 passlib
 requests
 uvicorn[standard]
+
+
+langchain
+langchain-community
+langchain-huggingface
+langchain-ollama
+pymupdf
+faiss-cpu
+sentence-transformers
