@@ -2,20 +2,35 @@ from fastapi import APIRouter,  UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from DB_Save.controller.Minio_controller import POST_file_in_Minio, Get_file_from_minio
+from Visualizer_csv.controller.controller_cleaner import clean_data
 from Models.schema import DocumentModel
 from DB_Save.controller.controller_elasticSearch import save_document_controller, retrieve_documents_by_project_controller
-Save_API = APIRouter()
+import requests
+from DB_Save.Models_save.Minio import MinIOStorage
 
+
+Save_API = APIRouter()
 
 
 @Save_API.post("/Save_in_to_Minio")
 async def upload_file(file: UploadFile = File(...)):
     try:
+        
         file_url = POST_file_in_Minio(file, file.filename, file.content_type)
+        cleaned_filename = (
+            file.filename if file.filename.startswith("cleaned_")
+            else "cleaned_" + file.filename
+        )
+        minio_storage = MinIOStorage()
+        get_file = minio_storage.exists(cleaned_filename)
+        if get_file is not True:
+            response = clean_data(file.filename)
+          # Adjust the URL as needed
         return {
             "message": "File uploaded successfully to MinIO.",
             "file_url": file_url,
-            "filename": file.filename
+            "filename": file.filename,
+            "cleaned_data_url": response 
         }
     except ValueError as ve:
         return JSONResponse(status_code=400, content={"message": str(ve)})

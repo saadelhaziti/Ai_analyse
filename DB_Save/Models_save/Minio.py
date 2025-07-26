@@ -67,3 +67,15 @@ class MinIOStorage(StorageBackend):
 
         except Exception as e:
             raise RuntimeError(f"Erreur lors de la récupération depuis MinIO : {str(e)}")
+    def exists(self, key: str) -> bool:
+        """
+        Vérifie si un fichier existe dans MinIO (bucket/key).
+        Retourne True si le fichier est trouvé, sinon False.
+        """
+        try:
+            self.s3.head_object(Bucket=MINIO_BUCKET_NAME, Key=key)
+            return True
+        except self.s3.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                return False
+            raise RuntimeError(f"Erreur lors de la vérification de l'existence du fichier : {str(e)}")

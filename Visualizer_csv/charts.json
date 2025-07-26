@@ -1,0 +1,111 @@
+[
+  {
+    "id": 1,
+    "title": "Trends in Quantity over Time",
+    "columns": [
+      "invoicedate",
+      "quantity"
+    ],
+    "description": "Shows the quantity of products sold per day over a period of time.",
+    "request_sql": "SELECT invoicedate, SUM(quantity) as total_quantity FROM data GROUP BY invoicedate ORDER BY invoicedate",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 2,
+    "title": "Top 5 Countries by Sales Volume",
+    "columns": [
+      "country",
+      "quantity"
+    ],
+    "description": "Displays the top 5 countries with the highest total sales volume.",
+    "request_sql": "SELECT country, SUM(quantity) as total_sales FROM data GROUP BY country ORDER BY total_sales DESC LIMIT 5",
+    "suggested_chart": "pie"
+  },
+  {
+    "id": 3,
+    "title": "Distribution of Unit Prices",
+    "columns": [
+      "unitprice"
+    ],
+    "description": "Shows the distribution of unit prices across all product transactions.",
+    "request_sql": "SELECT unitprice FROM data",
+    "suggested_chart": "histogram"
+  },
+  {
+    "id": 4,
+    "title": "Average Unit Price by Country",
+    "columns": [
+      "country",
+      "unitprice"
+    ],
+    "description": "Displays the average unit price for each country where transactions have occurred.",
+    "request_sql": "SELECT country, AVG(unitprice) as avg_unitprice FROM data GROUP BY country",
+    "suggested_chart": "bar"
+  },
+  {
+    "id": 5,
+    "title": "Product Quantity Trends by Stockcode",
+    "columns": [
+      "stockcode",
+      "quantity"
+    ],
+    "description": "Shows the quantity of each product sold over time.",
+    "request_sql": "SELECT stockcode, SUM(quantity) as total_quantity FROM data GROUP BY stockcode ORDER BY stockcode",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 6,
+    "title": "Sales Volume by Product Description",
+    "columns": [
+      "description",
+      "quantity"
+    ],
+    "description": "Displays the total sales volume for each unique product description.",
+    "request_sql": "SELECT description, SUM(quantity) as total_sales FROM data GROUP BY description ORDER BY total_sales DESC",
+    "suggested_chart": "pie"
+  },
+  {
+    "id": 7,
+    "title": "Unit Price Trends by Stockcode",
+    "columns": [
+      "stockcode",
+      "unitprice"
+    ],
+    "description": "Shows the trend of unit price for each unique product over time.",
+    "request_sql": "SELECT stockcode, AVG(unitprice) as avg_unitprice FROM data GROUP BY stockcode ORDER BY stockcode",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 8,
+    "title": "Top 5 Products by Sales Volume",
+    "columns": [
+      "stockcode",
+      "quantity"
+    ],
+    "description": "Displays the top 5 products with the highest total sales volume.",
+    "request_sql": "SELECT stockcode, SUM(quantity) as total_sales FROM data GROUP BY stockcode ORDER BY total_sales DESC LIMIT 5",
+    "suggested_chart": "pie"
+  },
+  {
+    "id": 9,
+    "title": "Customer Sales Volume by Date",
+    "columns": [
+      "invoicedate",
+      "customerid"
+    ],
+    "description": "Shows the total sales volume per customer on each day.",
+    "request_sql": "SELECT invoicedate, SUM(quantity) as total_sales FROM data GROUP BY invoicedate, customerid ORDER BY invoicedate",
+    "suggested_chart": "scatter"
+  },
+  {
+    "id": 10,
+    "title": "Sales Volume by Customer",
+    "columns": [
+      "customerid",
+      "quantity"
+    ],
+    "description": "Displays the total sales volume for each unique customer.",
+    "request_sql": "SELECT customerid, SUM(quantity) as total_sales FROM data GROUP BY customerid ORDER BY total_sales DESC",
+    "suggested_chart": "bar"
+  }
+]
