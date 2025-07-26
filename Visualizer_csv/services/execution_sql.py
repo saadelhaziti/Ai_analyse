@@ -1,27 +1,27 @@
 import pandas as pd
 import duckdb
-import requests
+import json
 from typing import List, Dict
-from DB_Save.controller.Minio_controller import Get_file_from_minio
+from DB_Save.controller.Minio_controller import Get_file_from_minio, POST_file_in_Minio
 from DB_Save.Models_save.Minio_forma_save import Froma_Minio
 
 def run_queries_to_minio(
     csv_path: str,
-    prompts: List[Dict]
+    prompts: List[Dict],
+    project_guid: str = None
 ):
     """
     Executes SQL queries from a list of prompt dicts on a CSV file using DuckDB,
     and uploads the result as CSV to MinIO using Froma_Minio and POST_file_in_Minio.
-    
-    Args:
-        csv_path (str): Path to CSV file containing data.
-        prompts (List[Dict]): List of prompt objects (must include 'request_sql' and 'title').
+
+    Skips any result with more than 200 rows.
+    Saves valid prompts into 'validjson.json'.
     """
 
     # Load CSV data
     try:
-       file_stream, _ = Get_file_from_minio(csv_path)
-       df = pd.read_csv(file_stream, encoding='utf-8')
+        file_stream, _ = Get_file_from_minio(csv_path)
+        df = pd.read_csv(file_stream, encoding='utf-8')
     except Exception as e:
         print(f"Failed to read CSV: {e}")
         return
@@ -29,21 +29,38 @@ def run_queries_to_minio(
     # Register table as 'data' in DuckDB
     duckdb.register("data", df)
 
-    # Execute each SQL query and upload result
+    valid_prompts = []
+
     for prompt in prompts:
         try:
             print(f"Executing: {prompt['title']}")
             sql = prompt["request_sql"]
             result_df = duckdb.query(sql).to_df()
 
-            # Convert result to CSV
+            if len(result_df) > 400:
+                print(f"Skipping '{prompt['title']}' – result has {len(result_df)} rows.")
+                continue
 
             output_stream = Froma_Minio(result_df)
-            output_filename = prompt["title"].replace(" ", "_").replace("/", "_") + ".csv"
-            files = {"file": (output_filename, output_stream, "text/csv")}
-            response = requests.post("http://127.0.0.1:8000/DB_Save/Save_in_to_Minio", files=files)
-            # add url to prompt
-            # prompt.a
+            title_safe = str(prompt["title"]).replace(" ", "_").replace("/", "_")
+            output_filename = f"Id{prompt['id']}_{title_safe}.csv"
+
+            file_url = POST_file_in_Minio(output_stream, output_filename, "text/csv")
+            prompt["result_url"] = file_url  # Add result URL to the prompt
+            prompt["project_guid"] = project_guid  # Add project GUID to the prompt
+            valid_prompts.append(prompt)
 
         except Exception as e:
-            raise ValueError(f"Error executing SQL query '{prompt['title']}': {str(e)}") from e
+            print(f"Error executing SQL query '{prompt['title']}': {str(e)}")
+
+    # Save valid prompts to JSON file
+    try:
+        for idx, prompt in enumerate(valid_prompts, start=1):
+            prompt["id"] = idx
+        with open("validjson.json", "w", encoding="utf-8") as f:
+            json.dump(valid_prompts, f, ensure_ascii=False, indent=4)
+        print("validjson.json saved successfully.")
+    except Exception as e:
+        print(f"Failed to save validjson.json: {e}")
+
+

@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "title": "Top 5 Countries by Sales Volume",
+        "columns": [
+            "country",
+            "quantity"
+        ],
+        "description": "Displays the top 5 countries with the highest total sales volume.",
+        "request_sql": "SELECT country, SUM(quantity) as total_sales FROM data GROUP BY country ORDER BY total_sales DESC LIMIT 5",
+        "suggested_chart": "pie",
+        "result_url": "http://localhost:9000/test1/Id2_Top_5_Countries_by_Sales_Volume.csv"
+    },
+    {
+        "id": 2,
+        "title": "Average Unit Price by Country",
+        "columns": [
+            "country",
+            "unitprice"
+        ],
+        "description": "Displays the average unit price for each country where transactions have occurred.",
+        "request_sql": "SELECT country, AVG(unitprice) as avg_unitprice FROM data GROUP BY country",
+        "suggested_chart": "bar",
+        "result_url": "http://localhost:9000/test1/Id4_Average_Unit_Price_by_Country.csv"
+    },
+    {
+        "id": 3,
+        "title": "Top 5 Products by Sales Volume",
+        "columns": [
+            "stockcode",
+            "quantity"
+        ],
+        "description": "Displays the top 5 products with the highest total sales volume.",
+        "request_sql": "SELECT stockcode, SUM(quantity) as total_sales FROM data GROUP BY stockcode ORDER BY total_sales DESC LIMIT 5",
+        "suggested_chart": "pie",
+        "result_url": "http://localhost:9000/test1/Id8_Top_5_Products_by_Sales_Volume.csv"
+    }
+]

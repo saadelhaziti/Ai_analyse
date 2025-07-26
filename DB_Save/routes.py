@@ -1,19 +1,28 @@
-from fastapi import APIRouter,  UploadFile, File, HTTPException
+from fastapi import APIRouter,  UploadFile, File, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from DB_Save.controller.Minio_controller import POST_file_in_Minio, Get_file_from_minio
 from Visualizer_csv.controller.controller_cleaner import clean_data
 from Models.schema import DocumentModel
 from DB_Save.controller.controller_elasticSearch import save_document_controller, retrieve_documents_by_project_controller
-import requests
+from sqlalchemy.orm import Session
 from DB_Save.Models_save.Minio import MinIOStorage
-
+from users.Models.schemas import ProjectCreate
+from users.services.database import SessionLocal
+from users.controller.Project_controller import update_project_controller
+from users.services.Project_Services import get_project
 
 Save_API = APIRouter()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@Save_API.post("/Save_in_to_Minio")
-async def upload_file(file: UploadFile = File(...)):
+@Save_API.post("/Save_in_to_Minio/{guid_project}")
+async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session = Depends(get_db)):
     try:
         
         file_url = POST_file_in_Minio(file, file.filename, file.content_type)
@@ -25,7 +34,16 @@ async def upload_file(file: UploadFile = File(...)):
         get_file = minio_storage.exists(cleaned_filename)
         if get_file is not True:
             response = clean_data(file.filename)
+            proj = get_project(db, guid_project)
+            update_payload = ProjectCreate(
+                guid_user=str(proj.guid_user),  # You can fetch or pass the actual user if needed
+                data_url_clean=response,
+                data_prute_url=file_url,
+                guid_elasticsearch=proj.guid_elasticsearch,
+            )
+            updated_project = update_project_controller(guid_project, update_payload, db)
           # Adjust the URL as needed
+        
         return {
             "message": "File uploaded successfully to MinIO.",
             "file_url": file_url,

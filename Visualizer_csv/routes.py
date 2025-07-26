@@ -28,7 +28,7 @@ def analyst(csv_path: str, output_path: str = "charts.json"):
         return JSONResponse(status_code=500, content={"message": str(e)})
 
 @app.get("/execution_sql")
-def execution_sql(csv_path: str):
+def execution_sql(csv_path: str, project_guid: str = None):
     """
     Execute SQL queries from prompts and upload results to MinIO.
     
@@ -41,7 +41,7 @@ def execution_sql(csv_path: str):
         json_path = os.path.join(base_dir, "charts.json")
         with open(json_path, "r") as f:
             prompts = json.load(f)
-        run_queries_to_minio(csv_path, prompts)
+        run_queries_to_minio(csv_path, prompts, project_guid)
         return {"message": "SQL queries executed and results uploaded successfully."}
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": str(e)})
