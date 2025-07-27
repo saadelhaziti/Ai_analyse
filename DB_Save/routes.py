@@ -25,18 +25,22 @@ def get_db():
 @Save_API.post("/Save_in_to_Minio/{guid_project}")
 async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session = Depends(get_db)):
     try:
-        
-        file_url = POST_file_in_Minio(file, file.filename, file.content_type)
+        proj = get_project(db, guid_project)
         cleaned_filename = (
             file.filename if file.filename.startswith("cleaned_")
             else "cleaned_" + file.filename
         )
+        user_id = str(proj.guid_user)  # or username if available
+        project_name = guid_project
+        key_path = f"{user_id}/{project_name}/{file.filename}"
+        clean_data_filename = f"{user_id}/{project_name}/{cleaned_filename}"
+        file_url = POST_file_in_Minio(file, key_path, file.content_type)
+        
         minio_storage = MinIOStorage()
-        get_file = minio_storage.exists(cleaned_filename)
+        get_file = minio_storage.exists(clean_data_filename)
         if get_file is not True:
-            response = clean_data(file.filename)
-            metadata = meta_data(file.filename)
-            proj = get_project(db, guid_project)
+            response = clean_data(key_path)
+            metadata = meta_data(key_path)
             update_payload = ProjectCreate(
                 guid_user=str(proj.guid_user),  # You can fetch or pass the actual user if needed
                 Project_name=proj.Project_name,

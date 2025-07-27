@@ -8,7 +8,7 @@ def prepare_csv_prompt_input(file_stream: str):
     # 3. Load DataFrame
     file_stream, content_type = Get_file_from_minio(file_stream)
     df = pd.read_csv(file_stream, encoding='utf-8')
-
+    print("dataframe loaded")
     # 4. Generate metadata
     sample = df.head(5).to_string(index=False)  # Preview of first 5 rows
     columns = df.dtypes.astype(str).to_dict()   # Column names + types

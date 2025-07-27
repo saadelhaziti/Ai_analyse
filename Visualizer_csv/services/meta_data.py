@@ -1,14 +1,14 @@
 from DB_Save.controller.Minio_controller import POST_file_in_Minio, Get_file_from_minio
 import pandas as pd
 import numpy as np
-import io
-
+import io, os
 def meta_data(input_filename: str):
     """
     This function is a placeholder for any metadata-related operations.
     It can be expanded to include functionality such as retrieving metadata
     from files, databases, or other sources.
     """
+    dir_path, filename = os.path.split(input_filename)
     file_stream, _ = Get_file_from_minio(input_filename)
     df = pd.read_csv(file_stream, encoding='utf-8')
     if df.empty:
@@ -31,7 +31,7 @@ def meta_data(input_filename: str):
         "Correlation matrix:\n" + str(corr_matrix)
     )
     # save metadata to MinIO
-    metadata_filename = "metadata_" + input_filename.replace(".csv", ".txt")
+    metadata_filename = f"{dir_path}/metadata_{filename.replace('.csv', '.txt')}"
     metadata_stream = io.BytesIO(metadata.encode('utf-8'))
     metadata_stream.seek(0)
     file_url = POST_file_in_Minio(metadata_stream, metadata_filename, "text/plain")

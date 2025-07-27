@@ -3,8 +3,7 @@ from fastapi.responses import JSONResponse
 from Visualizer_csv.controller.controller_cleaner import clean_data
 from Visualizer_csv.controller.controller_analyst import analyze_controll
 from Visualizer_csv.services.execution_sql import run_queries_to_minio
-import json
-import os
+import json, os
 
 app = APIRouter()
 

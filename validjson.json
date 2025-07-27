@@ -1,38 +1,41 @@
 [
     {
         "id": 1,
-        "title": "Top 5 Countries by Sales Volume",
+        "title": "Quantity vs. Unit Price Distribution",
         "columns": [
-            "country",
-            "quantity"
+            "quantity",
+            "unitprice"
         ],
-        "description": "Displays the top 5 countries with the highest total sales volume.",
-        "request_sql": "SELECT country, SUM(quantity) as total_sales FROM data GROUP BY country ORDER BY total_sales DESC LIMIT 5",
-        "suggested_chart": "pie",
-        "result_url": "http://localhost:9000/test1/Id2_Top_5_Countries_by_Sales_Volume.csv"
+        "description": "Analyzes the relationship between quantity and unit price to identify any correlations or trends.",
+        "request_sql": "SELECT AVG(quantity), MEDIAN(unitprice) FROM data",
+        "suggested_chart": "scatter",
+        "result_url": "b53cccff-202f-461b-b592-4f9788e60a69/233a648d-da0b-4230-8961-0cab297d56e8/results/Id1_Quantity_vs._Unit_Price_Distribution.csv",
+        "project_guid": "233a648d-da0b-4230-8961-0cab297d56e8"
     },
     {
         "id": 2,
-        "title": "Average Unit Price by Country",
+        "title": "Quantity by Country",
         "columns": [
             "country",
-            "unitprice"
+            "quantity"
         ],
-        "description": "Displays the average unit price for each country where transactions have occurred.",
-        "request_sql": "SELECT country, AVG(unitprice) as avg_unitprice FROM data GROUP BY country",
+        "description": "Displays the total quantity for each unique country to understand sales distribution across countries.",
+        "request_sql": "SELECT country, SUM(quantity) FROM data GROUP BY country ORDER BY SUM(quantity) DESC",
         "suggested_chart": "bar",
-        "result_url": "http://localhost:9000/test1/Id4_Average_Unit_Price_by_Country.csv"
+        "result_url": "b53cccff-202f-461b-b592-4f9788e60a69/233a648d-da0b-4230-8961-0cab297d56e8/results/Id2_Quantity_by_Country.csv",
+        "project_guid": "233a648d-da0b-4230-8961-0cab297d56e8"
     },
     {
         "id": 3,
-        "title": "Top 5 Products by Sales Volume",
+        "title": "Top 10 Customers by Quantity",
         "columns": [
-            "stockcode",
+            "customerid",
             "quantity"
         ],
-        "description": "Displays the top 5 products with the highest total sales volume.",
-        "request_sql": "SELECT stockcode, SUM(quantity) as total_sales FROM data GROUP BY stockcode ORDER BY total_sales DESC LIMIT 5",
+        "description": "Identifies the top 10 customers who purchased the most items.",
+        "request_sql": "SELECT customerid, SUM(quantity) FROM data GROUP BY customerid ORDER BY SUM(quantity) DESC LIMIT 10",
         "suggested_chart": "pie",
-        "result_url": "http://localhost:9000/test1/Id8_Top_5_Products_by_Sales_Volume.csv"
+        "result_url": "b53cccff-202f-461b-b592-4f9788e60a69/233a648d-da0b-4230-8961-0cab297d56e8/results/Id3_Top_10_Customers_by_Quantity.csv",
+        "project_guid": "233a648d-da0b-4230-8961-0cab297d56e8"
     }
 ]

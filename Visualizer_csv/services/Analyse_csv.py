@@ -8,7 +8,7 @@ def analyze_and_generate_charts(input_filename: str, output_path: str = "charts.
 
     variable_name = prepare_csv_prompt_input(input_filename)
     prompt = load_prompt("csv_analysis", variable_name)
-
+    print(f"Prompt for analysis: {prompt}")
     result = subprocess.run(
         ["ollama", "run", "mistral"],
         input=prompt.encode("utf-8"),
@@ -19,8 +19,7 @@ def analyze_and_generate_charts(input_filename: str, output_path: str = "charts.
 
     try:
         charts = json.loads(output)
-        with open(output_path, "w") as f:
-            json.dump(charts, f, indent=2)
+        
         return charts
     except Exception as e:
         raise ValueError(f"Error parsing response: {str(e)}") from e

@@ -45,8 +45,8 @@ class MinIOStorage(StorageBackend):
                 key,
                 ExtraArgs={"ContentType": content_type},
             )
-            file_url = f"http{'s' if MINIO_SECURE else ''}://{MINIO_ENDPOINT}/{MINIO_BUCKET_NAME}/{key}"
-            return file_url
+            # file_url = f"http{'s' if MINIO_SECURE else ''}://{MINIO_ENDPOINT}/{MINIO_BUCKET_NAME}/{key}"
+            return key
         except Exception as e:
             raise RuntimeError(f"Erreur d'upload vers MinIO : {str(e)}")
         
