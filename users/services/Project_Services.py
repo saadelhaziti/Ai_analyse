@@ -14,6 +14,16 @@ def get_project(db: Session, guid: str):
 def gets_all_projects(db: Session):
     return db.query(Project).all()
 
+def update_project(db: Session, guid: str, project: ProjectCreate):
+    db_project = get_project(db, guid)
+    if db_project:
+        for key, value in project.dict().items():
+            setattr(db_project, key, value)
+        db.commit()
+        db.refresh(db_project)
+        return db_project
+    return None
+
 def delete_project(db: Session, guid: str):
     proj = get_project(db, guid)
     db.delete(proj)

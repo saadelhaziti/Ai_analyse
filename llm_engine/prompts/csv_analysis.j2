@@ -12,7 +12,6 @@ For each visualization, include the following:
 - `id`: A numeric identifier (1–10)
 - `title`: A concise title describing the visualization goal
 - `columns`: List of column names used
-- `actions`: Aggregation or transformation actions used (e.g., `SUM(actual_price)`, `COUNT(*)`, etc.)
 - `description`: Short explanation of the insight provided
 - `request_sql`: A valid DuckDB SQL query using the `data` table that prepares the data for visualization
 - `suggested_chart`: One of the following chart types: `bar`, `line`, `histogram`, `pie`, `scatter`, `boxplot`
@@ -36,7 +35,6 @@ Output must be a list of JSON objects using the **exact structure** shown below 
     "id": 1,
     "title": "title of the visualization",
     "columns": ["column1", "column2"],
-    "actions": ["actions_column1", "actions_column2"],
     "description": "",
     "request_sql": "",
     "suggested_chart": ""

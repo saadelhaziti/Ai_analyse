@@ -1,21 +1,62 @@
-from fastapi import APIRouter,  UploadFile, File, HTTPException
+from fastapi import APIRouter,  UploadFile, File, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from DB_Save.controller.Minio_controller import POST_file_in_Minio, Get_file_from_minio
+from Visualizer_csv.controller.controller_cleaner import clean_data
 from Models.schema import DocumentModel
 from DB_Save.controller.controller_elasticSearch import save_document_controller, retrieve_documents_by_project_controller
+from sqlalchemy.orm import Session
+from DB_Save.Models_save.Minio import MinIOStorage
+from users.Models.schemas import ProjectCreate
+from users.services.database import SessionLocal
+from users.controller.Project_controller import update_project_controller
+from users.services.Project_Services import get_project
+from Visualizer_csv.services.meta_data import meta_data
+
 Save_API = APIRouter()
 
-
-
-@Save_API.post("/Save_in_to_Minio")
-async def upload_file(file: UploadFile = File(...)):
+def get_db():
+    db = SessionLocal()
     try:
-        file_url = POST_file_in_Minio(file, file.filename, file.content_type)
+        yield db
+    finally:
+        db.close()
+
+@Save_API.post("/Save_in_to_Minio/{guid_project}")
+async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session = Depends(get_db)):
+    try:
+        proj = get_project(db, guid_project)
+        cleaned_filename = (
+            file.filename if file.filename.startswith("cleaned_")
+            else "cleaned_" + file.filename
+        )
+        user_id = str(proj.guid_user)  # or username if available
+        project_name = guid_project
+        key_path = f"{user_id}/{project_name}/{file.filename}"
+        clean_data_filename = f"{user_id}/{project_name}/{cleaned_filename}"
+        file_url = POST_file_in_Minio(file, key_path, file.content_type)
+        
+        minio_storage = MinIOStorage()
+        get_file = minio_storage.exists(clean_data_filename)
+        if get_file is not True:
+            response = clean_data(key_path)
+            metadata = meta_data(key_path)
+            update_payload = ProjectCreate(
+                guid_user=str(proj.guid_user),  # You can fetch or pass the actual user if needed
+                Project_name=proj.Project_name,
+                data_type=proj.data_type,  # Assuming you have a data_type field in your
+                data_url_clean=response,
+                data_prute_url=file_url,
+                metadata_url=metadata,
+            )
+            update_project_controller(guid_project, update_payload, db)
+          # Adjust the URL as needed
+        
         return {
             "message": "File uploaded successfully to MinIO.",
             "file_url": file_url,
-            "filename": file.filename
+            "filename": file.filename,
+            "cleaned_data_url": response 
         }
     except ValueError as ve:
         return JSONResponse(status_code=400, content={"message": str(ve)})

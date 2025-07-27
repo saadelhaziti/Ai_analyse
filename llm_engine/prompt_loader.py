@@ -2,8 +2,11 @@ import os
 import json
 from jinja2 import Environment, FileSystemLoader
 
-PROMPT_DIR = "prompts"
-REGISTRY_FILE = "prompt_registry.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROMPT_DIR = os.path.join(BASE_DIR,"prompts")
+# REGISTRY_FILE = "./prompt_registry.json"
+
+REGISTRY_FILE = os.path.join(BASE_DIR, "prompt_registry.json")
 
 env = Environment(loader=FileSystemLoader(PROMPT_DIR))
 

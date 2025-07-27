@@ -1,5 +1,6 @@
-pandas 
-sklearn
+fastapi
+pandas
+scikit-learn
 boto3
 elasticsearch
 jinja2
@@ -9,3 +10,13 @@ psycopg2-binary
 pydantic[email]
 passlib
 requests
+uvicorn[standard]
+duckdb
+bcrypt
+langchain
+langchain-community
+langchain-huggingface
+langchain-ollama
+pymupdf
+faiss-cpu
+sentence-transformers

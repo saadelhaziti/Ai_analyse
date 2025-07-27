@@ -5,3 +5,6 @@ __pycache__/
 tests/
 # ignore all data directories
 data/
+
+# ignore all log files
+venv/

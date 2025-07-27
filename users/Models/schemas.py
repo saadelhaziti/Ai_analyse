@@ -3,9 +3,11 @@ from typing import List
 from datetime import date
 
 class ProjectBase(BaseModel):
-    data_url_clean: str
-    data_prute_url: str
-    guid_elasticsearch: str
+    Project_name : str
+    data_type : str
+    data_url_clean : str
+    data_prute_url : str
+    metadata_url : str
 
 class ProjectCreate(ProjectBase):
     guid_user: str

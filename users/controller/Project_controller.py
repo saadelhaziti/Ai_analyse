@@ -33,6 +33,17 @@ def get_all_projects_controller(db: Session = Depends(get_db)):
     if not projects:
         raise HTTPException(status_code=404, detail="No projects found")
     return projects
+def update_project_controller(guid: str, project: schemas.ProjectCreate, db: Session = Depends(get_db)):
+    # Validate project not empty
+    if not project:
+        raise HTTPException(status_code=400, detail="Project data is required")
+    proj = API_project.get_project(db, guid)
+    if not proj:
+        raise HTTPException(status_code=404, detail="Project not found")
+    updated_project = API_project.update_project(db, guid, project)
+    if not updated_project:
+        raise HTTPException(status_code=400, detail="Failed to update project")
+    return updated_project  
 
 def delete_project_controller(guid: str, db: Session = Depends(get_db)):
     proj = API_project.get_project(db, guid)
