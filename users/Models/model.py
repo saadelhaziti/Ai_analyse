@@ -11,9 +11,11 @@ class Project(Base):
     __tablename__ = 'project'
     guid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     guid_user = Column(String, ForeignKey('user.guid'))
+    Project_name = Column(String, nullable=False)
+    data_type = Column(String, nullable=False)  # e.g., 'csv', 'json'
     data_url_clean = Column(String)
     data_prute_url = Column(String)
-    guid_elasticsearch = Column(String)
+    metadata_url = Column(String)
 
     user = relationship("User", back_populates="projects")
 

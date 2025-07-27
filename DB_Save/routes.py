@@ -11,6 +11,7 @@ from users.Models.schemas import ProjectCreate
 from users.services.database import SessionLocal
 from users.controller.Project_controller import update_project_controller
 from users.services.Project_Services import get_project
+from Visualizer_csv.services.meta_data import meta_data
 
 Save_API = APIRouter()
 
@@ -34,14 +35,17 @@ async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session
         get_file = minio_storage.exists(cleaned_filename)
         if get_file is not True:
             response = clean_data(file.filename)
+            metadata = meta_data(file.filename)
             proj = get_project(db, guid_project)
             update_payload = ProjectCreate(
                 guid_user=str(proj.guid_user),  # You can fetch or pass the actual user if needed
+                Project_name=proj.Project_name,
+                data_type=proj.data_type,  # Assuming you have a data_type field in your
                 data_url_clean=response,
                 data_prute_url=file_url,
-                guid_elasticsearch=proj.guid_elasticsearch,
+                metadata_url=metadata,
             )
-            updated_project = update_project_controller(guid_project, update_payload, db)
+            update_project_controller(guid_project, update_payload, db)
           # Adjust the URL as needed
         
         return {
