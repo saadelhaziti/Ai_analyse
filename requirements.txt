@@ -11,8 +11,8 @@ pydantic[email]
 passlib
 requests
 uvicorn[standard]
-
-
+duckdb
+bcrypt
 langchain
 langchain-community
 langchain-huggingface

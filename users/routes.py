@@ -49,6 +49,9 @@ def get_project(guid: str, db: Session = Depends(get_db)):
 @Users.get("/projects/", response_model=list[schemas.ProjectOut])
 def get_all_projects(db: Session = Depends(get_db)):
     return API_project.get_all_projects_controller(db)
+@Users.put("/projects/{guid}", response_model=schemas.ProjectOut)
+def update_project(guid: str, project: schemas.ProjectCreate, db: Session = Depends(get_db)):
+    return API_project.update_project_controller(guid, project, db)
 
 @Users.delete("/projects/{guid}")
 def delete_project(guid: str, db: Session = Depends(get_db)):
