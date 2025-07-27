@@ -13,8 +13,9 @@ class ProjectCreate(ProjectBase):
     guid_user: str
 
 class ProjectOut(ProjectBase):
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
 class UserBase(BaseModel):
     name_comple: str
@@ -27,5 +28,6 @@ class UserCreate(UserBase):
 
 class UserOut(UserBase):
     projects: List[ProjectOut] = []
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
