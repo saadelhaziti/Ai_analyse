@@ -14,7 +14,7 @@ class ChatManager:
         """Initialize the RAG system"""
         # Run initialization in a thread pool to avoid blocking
         self.qa_chain = await asyncio.get_event_loop().run_in_executor(
-            None, self.rag.initialize_rag, []
+            None, self.rag.initialize_rag
         )
 
     async def process_message(
