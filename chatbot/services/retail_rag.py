@@ -1,9 +1,8 @@
-import os
+import io
 import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
-
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaLLM
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
@@ -12,6 +11,13 @@ from langchain.chains.combine_documents.stuff import create_stuff_documents_chai
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain_huggingface import HuggingFaceEmbeddings
+from DB_Save.controller.Minio_controller import Get_file_from_minio, POST_file_in_Minio
+from users.services.Project_Services import get_project
+from sqlalchemy.orm import Session
+from DB_Save.routes import get_db
+from fastapi import Depends
+from DB_Save.Models_save.Minio import MinIOStorage
+
 
 
 class RetailRAG:
@@ -26,53 +32,67 @@ class RetailRAG:
             output_key="answer",
         )
         self.conversation_store = "conversations.json"
-        self.current_conversation_id = None
-        self.set_new_conversation_id()
-
-    def list_conversations(self) -> List[str]:
-        if os.path.exists(self.conversation_store):
-            with open(self.conversation_store, "r") as f:
-                conversations = json.load(f)
-            return list(conversations.keys())
-        return []
-
-    def set_new_conversation_id(self):
+        self.guid_project = None
+        self.db = get_db()
         self.clear_memory()
-        self.current_conversation_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    def set_conversation_id(self, conversation_id: str):
-        self.current_conversation_id = conversation_id
 
-    def load_conversation_history(self) -> Dict:
-        if os.path.exists(self.conversation_store):
-            with open(self.conversation_store, "r") as f:
-                return json.load(f)
-        return {}
+    def set_conversation_id(self, guid_project: str, db: Session = Depends(get_db)):
+        self.guid_project = guid_project
+        self.db = db
 
-    def load_existing_conversation(self, conversation_id: str) -> bool:
+    def load_conversation_history(self) -> List[Dict]:
+        proj = get_project(self.db, self.guid_project)
+        user_id = str(proj.guid_user)
+        key_path = f"{user_id}/{self.guid_project}/conversations.json"
+        minio_storage = MinIOStorage()
+
+        if not minio_storage.exists(key_path):
+            return []
+
+        try:
+            file_stream, _ = Get_file_from_minio(key_path)
+
+            if file_stream:
+                conversations = file_stream.read().decode('utf-8')
+                return json.loads(conversations)
+        except FileNotFoundError:
+            return []
+
+        return []
+        
+
+    def load_existing_conversation(self) -> bool:
         conversations = self.load_conversation_history()
-        if conversation_id in conversations:
-            self.set_conversation_id(conversation_id)
-            for exchange in conversations[conversation_id]:
-                if "question" in exchange and "answer" in exchange:
-                    self.memory.chat_memory.add_user_message(exchange["question"])
-                    self.memory.chat_memory.add_ai_message(exchange["answer"])
-            return True
-        return False
+        if not conversations:
+            return False
+
+        for exchange in conversations:
+            if "question" in exchange and "answer" in exchange:
+                self.memory.chat_memory.add_user_message(exchange["question"])
+                self.memory.chat_memory.add_ai_message(exchange["answer"])
+        return True
 
     def save_conversation(self, question: str, answer: str):
         conversations = self.load_conversation_history()
-        if self.current_conversation_id not in conversations:
-            conversations[self.current_conversation_id] = []
-        conversations[self.current_conversation_id].append(
-            {
-                "timestamp": datetime.now().isoformat(),
-                "question": question,
-                "answer": answer,
-            }
-        )
-        with open(self.conversation_store, "w") as f:
-            json.dump(conversations, f, indent=2)
+
+        if not isinstance(conversations, list):
+            conversations = []
+
+        conversations.append({
+            "timestamp": datetime.now().isoformat(),
+            "question": question,
+            "answer": answer
+        })
+
+        proj = get_project(self.db, self.guid_project)
+        user_id = str(proj.guid_user)
+        key_path = f"{user_id}/{self.guid_project}/conversations.json"
+
+        json_data = json.dumps(conversations, indent=2)
+        POST_file_in_Minio(io.BytesIO(json_data.encode("utf-8")), key_path, "application/json")
+
+
 
     def setup_vectorstore(self):
         base_dir = Path(__file__).resolve().parent
@@ -101,7 +121,7 @@ class RetailRAG:
 
 
     def setup_rag_chain(self, vectorstore):
-        # Prompt for general questions (no RAG)
+   
         self.retail_template = PromptTemplate(
             template="""You are a knowledgeable retail business expert with deep insights into industry trends, best practices, customer behavior, supply chain management, and strategic planning. Your expertise enables you to provide actionable advice and innovative solutions to help retail businesses grow, optimize operations, and navigate market challenges successfully.
             Previous conversation:
@@ -113,7 +133,6 @@ class RetailRAG:
             input_variables=["chat_history", "question"],
         )
 
-        # Prompt for vectorstore RAG answers
         self.vectorstore_template = PromptTemplate(
             template="""You are a retail business expert using the following information to answer the question.
             Context:
@@ -134,7 +153,6 @@ class RetailRAG:
             input_variables=["context", "chat_history", "input"],
         )
 
-        # Prompt to rewrite follow-up questions into standalone ones
         question_prompt = PromptTemplate(
             input_variables=["input", "chat_history"],
             template="""Given the conversation history and a follow-up question, rephrase the follow-up question to be a standalone question.
@@ -147,27 +165,24 @@ class RetailRAG:
             Standalone question:""",
         )
 
-        # Step 1: Make retriever aware of chat history
         history_aware_retriever = create_history_aware_retriever(
             llm=self.llm,
             retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
             prompt=question_prompt
         )
 
-        # Step 2: Combine retrieved docs + LLM using a custom prompt
         combine_docs_chain = create_stuff_documents_chain(
             llm=self.llm,
             prompt=self.vectorstore_template
         )
 
-        # Step 3: Full retrieval-augmented generation chain
         rag_chain = create_retrieval_chain(
             retriever=history_aware_retriever,
             combine_docs_chain=combine_docs_chain
         )
 
-        # Final wrapper that handles general vs RAG logic
-        def enhanced_qa_chain(question):
+       
+        def enhanced_qa_chain(question: str):
             relevance = self.check_question_relevance(question, vectorstore)
 
             chat_history = self.memory.chat_memory.messages[-6:] if self.memory.chat_memory.messages else []
@@ -178,13 +193,11 @@ class RetailRAG:
             if relevance == "vectorstore":
                 inputs = {
                     "input": question,
-                    "chat_history": chat_history
+                    "chat_history": history_str
                 }
                 response = rag_chain.invoke(inputs)
                 answer = response["answer"]
             else:
-                print("=========================================================================")
-                print(history_str)
                 prompt = self.retail_template.format(chat_history=history_str, question=question)
                 answer = self.llm.invoke(prompt)
                 self.memory.chat_memory.add_user_message(question)
@@ -206,10 +219,3 @@ class RetailRAG:
 
     def clear_memory(self):
         self.memory.clear()
-
-    def save_final_conversation(self):
-        conversations = self.load_conversation_history()
-        if self.current_conversation_id in conversations:
-            with open(self.conversation_store, "w") as f:
-                json.dump(conversations, f, indent=2)
-    
