@@ -6,7 +6,9 @@ from typing import Dict, List
 
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaLLM
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains.history_aware_retriever import create_history_aware_retriever
+from langchain.chains.retrieval import create_retrieval_chain
+from langchain.chains.combine_documents.stuff import create_stuff_documents_chain
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -95,44 +97,13 @@ class RetailRAG:
         relevant_docs = vectorstore.similarity_search_with_relevance_scores(question, k=5)
         has_relevant_docs = any(score > RELEVANCE_THRESHOLD for _, score in relevant_docs)
 
-        if not has_relevant_docs:
-            system_prompt = """You are a retail business expert. Determine if this question is related to:
-            - Retail business operations
-            - Consumer behavior
-            - Market trends
-            - Store operations
-            - E-commerce
-            - Retail technology
-            - Supply chain and inventory
-            - Retail marketing
-            - Customer experience
-            Respond only with 'true' if related to any of these areas, or 'false' if not."""
+        return "vectorstore" if has_relevant_docs else "general"
 
-            response = self.llm.invoke(
-                f"{system_prompt}\n\nQuestion: {question}\nAnswer (true/false):"
-            )
-            is_retail = response.strip().lower() == "true"
-            return "retail" if is_retail else "general"
-
-        return "vectorstore"
 
     def setup_rag_chain(self, vectorstore):
-        retail_template = PromptTemplate(
-            template="""You are a retail business expert.
-            Previous conversation:
-            {chat_history}
-            Current question: {question}
-            Please provide expert analysis based on retail industry knowledge, including:
-            - Industry best practices
-            - Current trends
-            - Strategic recommendations
-            - Potential challenges and solutions
-            Assistant:""",
-            input_variables=["chat_history", "question"],
-        )
-
-        general_template = PromptTemplate(
-            template="""You are an AI designed for retail business analysis.
+        # Prompt for general questions (no RAG)
+        self.retail_template = PromptTemplate(
+            template="""You are a knowledgeable retail business expert with deep insights into industry trends, best practices, customer behavior, supply chain management, and strategic planning. Your expertise enables you to provide actionable advice and innovative solutions to help retail businesses grow, optimize operations, and navigate market challenges successfully.
             Previous conversation:
             {chat_history}
             Current question: {question}
@@ -142,33 +113,79 @@ class RetailRAG:
             input_variables=["chat_history", "question"],
         )
 
-        vectorstore_qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=self.llm,
-            retriever=vectorstore.as_retriever(search_kwargs={"k": 3}),
-            memory=self.memory,
-            return_source_documents=True,
-            verbose=False,
+        # Prompt for vectorstore RAG answers
+        self.vectorstore_template = PromptTemplate(
+            template="""You are a retail business expert using the following information to answer the question.
+            Context:
+            {context}
+
+            Previous conversation:
+            {chat_history}
+
+            Current question: {input}
+
+            Based on the context and your expertise, provide a detailed answer including:
+            - Industry best practices
+            - Current trends
+            - Strategic recommendations
+            - Potential challenges and solutions
+
+            Assistant:""",
+            input_variables=["context", "chat_history", "input"],
         )
 
+        # Prompt to rewrite follow-up questions into standalone ones
+        question_prompt = PromptTemplate(
+            input_variables=["input", "chat_history"],
+            template="""Given the conversation history and a follow-up question, rephrase the follow-up question to be a standalone question.
+
+            Chat History:
+            {chat_history}
+
+            Follow-up question: {input}
+
+            Standalone question:""",
+        )
+
+        # Step 1: Make retriever aware of chat history
+        history_aware_retriever = create_history_aware_retriever(
+            llm=self.llm,
+            retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
+            prompt=question_prompt
+        )
+
+        # Step 2: Combine retrieved docs + LLM using a custom prompt
+        combine_docs_chain = create_stuff_documents_chain(
+            llm=self.llm,
+            prompt=self.vectorstore_template
+        )
+
+        # Step 3: Full retrieval-augmented generation chain
+        rag_chain = create_retrieval_chain(
+            retriever=history_aware_retriever,
+            combine_docs_chain=combine_docs_chain
+        )
+
+        # Final wrapper that handles general vs RAG logic
         def enhanced_qa_chain(question):
             relevance = self.check_question_relevance(question, vectorstore)
 
+            chat_history = self.memory.chat_memory.messages[-6:] if self.memory.chat_memory.messages else []
             history_str = "\n".join(
-                [f"{msg.type}: {msg.content}" for msg in self.memory.chat_memory.messages[-6:]]
-            ) if self.memory.chat_memory.messages else ""
+                [f"{msg.type}: {msg.content}" for msg in chat_history]
+            )
 
             if relevance == "vectorstore":
-                response = vectorstore_qa_chain({"question": question})
+                inputs = {
+                    "input": question,
+                    "chat_history": chat_history
+                }
+                response = rag_chain.invoke(inputs)
                 answer = response["answer"]
-
-            elif relevance == "retail":
-                prompt = retail_template.format(chat_history=history_str, question=question)
-                answer = self.llm.invoke(prompt)
-                self.memory.chat_memory.add_user_message(question)
-                self.memory.chat_memory.add_ai_message(answer)
-
             else:
-                prompt = general_template.format(chat_history=history_str, question=question)
+                print("=========================================================================")
+                print(history_str)
+                prompt = self.retail_template.format(chat_history=history_str, question=question)
                 answer = self.llm.invoke(prompt)
                 self.memory.chat_memory.add_user_message(question)
                 self.memory.chat_memory.add_ai_message(answer)
@@ -177,6 +194,7 @@ class RetailRAG:
             return {"result": answer}
 
         return enhanced_qa_chain
+
 
     def initialize_rag(self):
         vectorstore = self.setup_vectorstore()
@@ -194,3 +212,4 @@ class RetailRAG:
         if self.current_conversation_id in conversations:
             with open(self.conversation_store, "w") as f:
                 json.dump(conversations, f, indent=2)
+    
