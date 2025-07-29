@@ -8,3 +8,4 @@ data/
 
 # ignore all log files
 venv/
+conversations.json
