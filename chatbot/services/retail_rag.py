@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from DB_Save.routes import get_db
 from fastapi import Depends
 from DB_Save.Models_save.Minio import MinIOStorage
-
+from langchain_core.runnables import RunnableMap
 
 
 class RetailRAG:
@@ -40,6 +40,14 @@ class RetailRAG:
     def set_conversation_id(self, guid_project: str, db: Session = Depends(get_db)):
         self.guid_project = guid_project
         self.db = db
+        proj = get_project(self.db, self.guid_project)
+        try:
+            file_stream, _ = Get_file_from_minio(proj.metadata_url)
+
+            if file_stream:
+                self.metadata = file_stream.read().decode('utf-8')
+        except FileNotFoundError:
+            self.metadata = None
 
     def load_conversation_history(self) -> List[Dict]:
         proj = get_project(self.db, self.guid_project)
@@ -79,6 +87,9 @@ class RetailRAG:
         if not isinstance(conversations, list):
             conversations = []
 
+        if not isinstance(answer, str):
+            answer = str(answer)
+
         conversations.append({
             "timestamp": datetime.now().isoformat(),
             "question": question,
@@ -86,6 +97,7 @@ class RetailRAG:
         })
 
         proj = get_project(self.db, self.guid_project)
+    
         user_id = str(proj.guid_user)
         key_path = f"{user_id}/{self.guid_project}/conversations.json"
 
@@ -124,19 +136,28 @@ class RetailRAG:
    
         self.retail_template = PromptTemplate(
             template="""You are a knowledgeable retail business expert with deep insights into industry trends, best practices, customer behavior, supply chain management, and strategic planning. Your expertise enables you to provide actionable advice and innovative solutions to help retail businesses grow, optimize operations, and navigate market challenges successfully.
+
             Previous conversation:
             {chat_history}
+
+            Metadata (structured data from the retail dataset):
+            {metadata}
+
             Current question: {question}
+
             If the question is outside the retail domain, acknowledge this first.
             Then provide a helpful response.
             Assistant:""",
-            input_variables=["chat_history", "question"],
+            input_variables=["chat_history", "question", "metadata"],
         )
 
         self.vectorstore_template = PromptTemplate(
             template="""You are a retail business expert using the following information to answer the question.
             Context:
             {context}
+
+            Metadata (structured data from the retail dataset):
+            {metadata}
 
             Previous conversation:
             {chat_history}
@@ -150,7 +171,7 @@ class RetailRAG:
             - Potential challenges and solutions
 
             Assistant:""",
-            input_variables=["context", "chat_history", "input"],
+            input_variables=["context", "chat_history", "input", "metadata"],
         )
 
         question_prompt = PromptTemplate(
@@ -171,9 +192,14 @@ class RetailRAG:
             prompt=question_prompt
         )
 
-        combine_docs_chain = create_stuff_documents_chain(
-            llm=self.llm,
-            prompt=self.vectorstore_template
+        combine_docs_chain = RunnableMap(
+            input_mapper=lambda inputs: {
+                "input": inputs["input"],
+                "chat_history": inputs["chat_history"],
+                "context": inputs["context"],
+                "metadata": self.metadata
+            },
+            runnable=create_stuff_documents_chain(llm=self.llm, prompt=self.vectorstore_template)
         )
 
         rag_chain = create_retrieval_chain(
@@ -193,12 +219,13 @@ class RetailRAG:
             if relevance == "vectorstore":
                 inputs = {
                     "input": question,
-                    "chat_history": history_str
+                    "chat_history": history_str,
+                    "metadata": self.metadata
                 }
                 response = rag_chain.invoke(inputs)
-                answer = response["answer"]
+                answer = response["answer"]["runnable"]
             else:
-                prompt = self.retail_template.format(chat_history=history_str, question=question)
+                prompt = self.retail_template.format(chat_history=history_str, question=question, metadata=self.metadata)
                 answer = self.llm.invoke(prompt)
                 self.memory.chat_memory.add_user_message(question)
                 self.memory.chat_memory.add_ai_message(answer)
