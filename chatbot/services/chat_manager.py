@@ -1,8 +1,14 @@
+import json
 from typing import Dict, List, Optional
 import asyncio
 from datetime import datetime
 from chatbot.schemas.chat_schema import ChatResponse
-from chatbot.services.retail_rag import RetailRAG 
+from chatbot.services.retail_rag import RetailRAG
+from sqlalchemy.orm import Session
+from DB_Save.routes import get_db
+from users.services.Project_Services import get_project
+from DB_Save.controller.Minio_controller import Get_file_from_minio
+from fastapi import Depends
 
 
 class ChatManager:
@@ -14,18 +20,16 @@ class ChatManager:
         """Initialize the RAG system"""
         # Run initialization in a thread pool to avoid blocking
         self.qa_chain = await asyncio.get_event_loop().run_in_executor(
-            None, self.rag.initialize_rag, []
+            None, self.rag.initialize_rag
         )
 
     async def process_message(
-        self, question: str, conversation_id: Optional[str] = None
+        self, question: str, guid_project: str, db: Session = Depends(get_db)
     ) -> Dict:
         """Process a chat message"""
         # Load existing conversation if ID provided
-        if conversation_id:
-            self.rag.load_existing_conversation(conversation_id)
-        else:
-            self.rag.set_new_conversation_id()
+        self.rag.set_conversation_id(guid_project, db)
+        self.rag.load_existing_conversation()
 
         # Get response from RAG system (run in thread pool)
         response = await asyncio.get_event_loop().run_in_executor(
@@ -36,7 +40,7 @@ class ChatManager:
 
         return ChatResponse(
             answer=response["result"],
-            conversation_id=self.rag.current_conversation_id,
+            guid_project=self.rag.guid_project,
             timestamp=timestamp,
         )
 
@@ -60,7 +64,19 @@ class ChatManager:
         conv_list.sort(key=lambda x: x["started"], reverse=True)
         return conv_list[:5] 
 
-    async def get_conversation(self, conversation_id: str) -> Optional[Dict]:
+    async def get_conversation(self, guid_project: str, db: Session = Depends(get_db)) -> Optional[Dict]:
         """Get a specific conversation history"""
-        conversations = self.rag.load_conversation_history()
-        return conversations.get(conversation_id)
+        proj = get_project(db, guid_project)
+        user_id = str(proj.guid_user)
+        key_path = f"{user_id}/{guid_project}/conversations.json"
+      
+        try:
+            file_stream, _ = Get_file_from_minio(key_path)
+
+            if file_stream:
+                conversations = file_stream.read().decode('utf-8')
+                return json.loads(conversations)
+        except FileNotFoundError:
+            return None
+                
+

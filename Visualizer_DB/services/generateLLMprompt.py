@@ -1,7 +1,7 @@
 import psycopg2
 import os
 
-def generate_llm_prompt_from_credentials(credentials: dict, output_path="../Data/schema_prompt.txt") -> str:
+def generate_llm_prompt_from_credentials(credentials: dict) -> str:
     # Connexion à la base
     conn = psycopg2.connect(
         dbname=credentials["dbname"],
@@ -81,9 +81,6 @@ def generate_llm_prompt_from_credentials(credentials: dict, output_path="../Data
             f"qui fait référence à la colonne `{rel['to_column']}` de la table `{rel['to_table']}`.\n"
         )
 
-    # Enregistrement automatique dans un fichier
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(prompt)
+    
 
     return prompt

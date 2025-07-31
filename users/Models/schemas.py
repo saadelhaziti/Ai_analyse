@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import List
 from datetime import date
+from uuid import UUID
 
 class ProjectBase(BaseModel):
     Project_name : str
@@ -13,6 +14,7 @@ class ProjectCreate(ProjectBase):
     guid_user: str
 
 class ProjectOut(ProjectBase):
+    guid: UUID
     model_config = {
         "from_attributes": True
     }
@@ -28,6 +30,11 @@ class UserCreate(UserBase):
 
 class UserOut(UserBase):
     projects: List[ProjectOut] = []
+    guid: UUID
     model_config = {
         "from_attributes": True
     }
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

@@ -4,12 +4,11 @@ from pydantic import BaseModel
 
 class ChatMessage(BaseModel):
     question: str
-    conversation_id:    Optional[str] = None
 
 
 class ChatResponse(BaseModel):
     answer: str
-    conversation_id: str
+    guid_project: str
     timestamp: str
 
 
@@ -25,5 +24,5 @@ class ConversationInfo(BaseModel):
     message_count: int
 
 class ConversationResponse(BaseModel):
-    id: str
+    guid: str
     messages: List[ConversationMessage]

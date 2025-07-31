@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 import uuid
 
 class ElasticsearchInterface:
-    def __init__(self, host="http://localhost:9200", index_name="default-index"):
+    def __init__(self, host="http://elasticsearch:9200", index_name="default-index"):
         self.es = Elasticsearch(hosts=[host])
         self.index = index_name
 
@@ -14,6 +14,6 @@ class ElasticsearchInterface:
 
     def retrieve(self, doc_id: str):
         if not self.es.exists(index=self.index, id=doc_id):
-            return None
+            return False
         response = self.es.get(index=self.index, id=doc_id)
         return response['_source']

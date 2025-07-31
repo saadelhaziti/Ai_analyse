@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 import uuid
 
 class ElasticsearchStorage(StorageBackend):
-    def __init__(self, host="http://localhost:9200", index_name="default-index"):
+    def __init__(self, host="http://elasticsearch:9200", index_name="default-index"):
         self.es = Elasticsearch(hosts=[host])
         self.index = index_name
 
