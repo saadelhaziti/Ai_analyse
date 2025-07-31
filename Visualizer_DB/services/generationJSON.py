@@ -74,34 +74,32 @@ def generate_json_via_llm(schema_txt_path: str,  user_value: str) -> list:
     
 
     # hadi la partie dial openroute a si saad 
-    openrouter_api_key = os.getenv("OPENROUTER_API_KEY", "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")
-
-    headers = {
-        "Authorization": f"Bearer {openrouter_api_key}",
-        "Content-Type": "application/json"
-    }
-
-    data = {
-        "model": "mistralai/mistral-7b-instruct",  # Corrigé pour correspondre à un vrai modèle supporté
-        "messages": [
-            {"role": "user", "content": full_prompt}
-        ],
-        "max_tokens": 2000,
-        "temperature": 0.7
-    }
-
-    response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
+    response = requests.post(
+        "http://host.docker.internal:11434/api/generate",  # Use Docker service name here
+        json={"model": "mistral", "prompt": full_prompt},
+        stream=True
+    )
+    if response.status_code != 200:
+        raise ValueError(f"Failed to call Ollama API: {response.text}")
+    full_response_text = ""
+    try:
+        for line in response.iter_lines():
+            if line:
+                data = json.loads(line)
+                # Append the 'response' part to full text
+                full_response_text += data.get("response", "")
+        
 
     # w hna katsala a si saad la partie dial openrouter
-
+    except Exception as e:
+        raise ValueError(f"Error parsing response: {str(e)}") from e
     if response.status_code != 200:
         raise Exception(f"Erreur API : {response.status_code} - {response.text}")
 
-    content = response.json()["choices"][0]["message"]["content"]
-    print("Contenu reçu :\n", content)
+    charts = json.loads(full_response_text)
 
     try:
-        cleaned_content = clean_llm_output(content)
+        cleaned_content = clean_llm_output(charts)
         generated_json = json.loads(cleaned_content)
     except Exception as e:
         raise Exception(f"Erreur de parsing JSON : {e}")

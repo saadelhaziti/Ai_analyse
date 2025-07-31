@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from users.services.database import SessionLocal
 from users.Models import schemas
 import  users.services.User_Services as API_user
+from users.services.security import verify_password
 
 def get_db():
     db = SessionLocal()
@@ -26,6 +27,13 @@ def create_user_controller(user: schemas.UserCreate, db: Session = Depends(get_d
         raise HTTPException(status_code=400, detail="User already exists")
     
     return API_user.create_user(db, user)
+
+
+def login_user_controller(email: str, password: str, db: Session = Depends(get_db)):
+    user = API_user.get_user_by_email(db, email)
+    if not user or not verify_password(password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return user
 
 #updated controller functions for users and projects
 def update_user_controller(guid: str, user: schemas.UserCreate, db: Session = Depends(get_db)):

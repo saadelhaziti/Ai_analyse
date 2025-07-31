@@ -1,0 +1,24 @@
+# Ignore virtual environments
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore local development files
+.env
+*.env
+
+# Ignore Git repo
+.git/
+.gitignore
+
+# Ignore test data and logs
+tests/
+*.log
+*.csv
+*.sqlite3

@@ -8,17 +8,17 @@ from DB_Save.controller.Minio_controller import POST_file_in_Minio
 from Visualizer_DB.services.fetch_save import load_db_config
 from DB_Save.Models_save.Minio_forma_save import Froma_Minio
 
-def load_visualizations_from_file(file_name: str):
-    current_dir = os.path.dirname(__file__)  
-    file_path = os.path.join(current_dir, "..", file_name)  
-    file_path = os.path.abspath(file_path)
+# def load_visualizations_from_file(file_name: str):
+#     current_dir = os.path.dirname(__file__)  
+#     file_path = os.path.join(current_dir, "..", file_name)  
+#     file_path = os.path.abspath(file_path)
 
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+#     with open(file_path, "r", encoding="utf-8") as f:
+#         return json.load(f)
 
-def save_visualizations_to_file(file_path: str, data: List[Dict]):
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+# def save_visualizations_to_file(file_path: str, data: List[Dict]):
+#     with open(file_path, "w", encoding="utf-8") as f:
+#         json.dump(data, f, indent=2, ensure_ascii=False)
 
 def execute_queries_and_store(
     visualizations: List[Dict],
