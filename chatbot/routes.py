@@ -15,16 +15,16 @@ async def create_chat(guid_project: str, chat_message: ChatMessage, db: Session 
     return chat_response
 
 
-@Chat.get("/conversation/{conversation_id}", response_model=ConversationResponse)
-async def get_conversation(conversation_id: str):   
-    messages = await chatbot_controller.get_conversation_controller(conversation_id)
+@Chat.get("/conversation/{guid_project}", response_model=ConversationResponse)
+async def get_conversation(guid_project: str, db: Session = Depends(get_db)):   
+    messages = await chatbot_controller.get_conversation_controller(guid_project, db)
     if not messages:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return ConversationResponse(
-            id=conversation_id,
+            id=guid_project,
             messages=[ConversationMessage(**msg) for msg in messages]
         )
 
-@Chat.get("/conversation", response_model=List[ConversationInfo])
-async def list_conversations():
-    return await chatbot_controller.get_recent_conversations_controller()
+# @Chat.get("/conversation", response_model=List[ConversationInfo])
+# async def list_conversations():
+#     return await chatbot_controller.get_recent_conversations_controller()
