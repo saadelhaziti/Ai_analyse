@@ -43,6 +43,7 @@ def execute_queries_and_store(
         print(f" Erreur de connexion à PostgreSQL : {e}")
         return []
     id =0
+    visualizations_result = []
     for vis in visualizations:
         sql = vis.get("request_sql")
         if not sql:
@@ -50,10 +51,14 @@ def execute_queries_and_store(
             continue
 
         try:
+        # Try to execute and fetch query result
             cursor.execute(sql)
             columns = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
-
+        except Exception as e:
+            print(f"❌ Failed to execute/fetch SQL for ID={vis.get('id')}: {e}")
+            continue
+        try:
             df = pd.DataFrame(rows, columns=columns)
             id +=1
             # Convertir en CSV en mémoire
@@ -69,7 +74,7 @@ def execute_queries_and_store(
             # Ajout dans le dictionnaire JSON
             vis["result_url"] = file_url
             vis["Project_guid"] = project_guid
-
+            visualizations_result.append(vis)
             print(f"Résultat ID={vis.get('id')} enregistré à {file_url}")
 
         except Exception as e:
@@ -77,6 +82,6 @@ def execute_queries_and_store(
 
     cursor.close()
     conn.close()
-    return visualizations
+    return visualizations_result
 
 
