@@ -25,6 +25,12 @@ def get_user(guid: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+@Users.post("/login", response_model=schemas.UserOut)
+def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = API_user.login_user_controller(user.email, user.password, db)
+    if not db_user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return db_user
 
 @Users.put("/users/{guid}", response_model=schemas.UserOut)
 def update_user(guid: str, user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -57,3 +63,11 @@ def update_project(guid: str, project: schemas.ProjectCreate, db: Session = Depe
 def delete_project(guid: str, db: Session = Depends(get_db)):
     API_project.delete_project_controller(guid, db)
     return {"message": "Project deleted"}
+
+
+@Users.get("/users/{guid}/projects", response_model=list[schemas.ProjectOut])
+def get_user_projects(guid: str, db: Session = Depends(get_db)):
+    user = API_user.get_user_controller(guid, db)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.projects

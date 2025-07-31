@@ -5,14 +5,12 @@ from DB_Save.Models_save.Minio_forma_save import Froma_Minio
 from Visualizer_DB.services.generateLLMprompt import generate_llm_prompt_from_credentials
 from Models.db_credentials import DBCredentials
 from Visualizer_DB.services.generationJSON import generate_json_via_llm
-import os, json, io
-from DB_Save.controller.Minio_controller import POST_file_in_Minio
+import os
 from users.services.Project_Services import get_project
 from users.services.database import SessionLocal
 from users.Models.schemas import ProjectCreate
 from users.controller.Project_controller import update_project_controller
 from sqlalchemy.orm import Session
-from Visualizer_DB.services.execute import load_visualizations_from_file
 from Visualizer_DB.services.execute import execute_queries_and_store
 from Visualizer_DB.services.elasticsearch import ElasticsearchInterface
 from Visualizer_DB.services.meta_data import meta_data

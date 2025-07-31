@@ -1,0 +1,114 @@
+[
+  {
+    "id": 1,
+    "title": "Quantity vs Invoice Date Trend",
+    "columns": [
+      "invoicedate",
+      "quantity"
+    ],
+    "description": "Visualize the trend of quantity over invoice dates",
+    "request_sql": "SELECT invoicedate, COUNT(*) as total_quantity FROM data GROUP BY invoicedate ORDER BY invoicedate ASC",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 2,
+    "title": "Quantity Distribution by Country",
+    "columns": [
+      "country",
+      "quantity"
+    ],
+    "description": "Show the distribution of quantity across different countries",
+    "request_sql": "SELECT country, AVG(quantity) as avg_quantity FROM data GROUP BY country ORDER BY avg_quantity DESC",
+    "suggested_chart": "bar"
+  },
+  {
+    "id": 3,
+    "title": "Unit Price vs Quantity Correlation",
+    "columns": [
+      "unitprice",
+      "quantity"
+    ],
+    "description": "Visualize the correlation between unit price and quantity",
+    "request_sql": "SELECT AVG(unitprice), AVG(quantity) FROM data",
+    "suggested_chart": "scatter"
+  },
+  {
+    "id": 4,
+    "title": "Top Selling Stockcodes",
+    "columns": [
+      "stockcode",
+      "quantity"
+    ],
+    "description": "Identify the top selling stockcodes based on quantity",
+    "request_sql": "SELECT stockcode, SUM(quantity) as total_sales FROM data GROUP BY stockcode ORDER BY total_sales DESC LIMIT 10",
+    "suggested_chart": "pie"
+  },
+  {
+    "id": 5,
+    "title": "Quantity Trend Over Time (Monthly)",
+    "columns": [
+      "invoicedate",
+      "quantity"
+    ],
+    "description": "Visualize the quantity trend over time grouped by month",
+    "request_sql": "SELECT DATE_PART('month', invoicedate) as month, SUM(quantity) as total_quantity FROM data GROUP BY month ORDER BY month ASC",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 6,
+    "title": "Customer ID vs Quantity Distribution",
+    "columns": [
+      "customerid",
+      "quantity"
+    ],
+    "description": "Show the distribution of quantity across different customer IDs",
+    "request_sql": "SELECT customerid, AVG(quantity) as avg_quantity FROM data GROUP BY customerid ORDER BY avg_quantity DESC LIMIT 10",
+    "suggested_chart": "bar"
+  },
+  {
+    "id": 7,
+    "title": "Unit Price Trend Over Time (Monthly)",
+    "columns": [
+      "invoicedate",
+      "unitprice"
+    ],
+    "description": "Visualize the unit price trend over time grouped by month",
+    "request_sql": "SELECT DATE_PART('month', invoicedate) as month, AVG(unitprice) as avg_unitprice FROM data GROUP BY month ORDER BY month ASC",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 8,
+    "title": "Quantity by Country and Stockcode",
+    "columns": [
+      "country",
+      "stockcode",
+      "quantity"
+    ],
+    "description": "Show the distribution of quantity for each stockcode across different countries",
+    "request_sql": "SELECT country, stockcode, SUM(quantity) as total_quantity FROM data GROUP BY country, stockcode ORDER BY total_quantity DESC",
+    "suggested_chart": "heatmap"
+  },
+  {
+    "id": 9,
+    "title": "Average Quantity by Stockcode and Month",
+    "columns": [
+      "stockcode",
+      "invoicedate",
+      "quantity"
+    ],
+    "description": "Visualize the average quantity sold for each stockcode per month",
+    "request_sql": "SELECT DATE_PART('month', invoicedate) as month, stockcode, AVG(quantity) as avg_quantity FROM data GROUP BY stockcode, month ORDER BY avg_quantity DESC, month ASC",
+    "suggested_chart": "line"
+  },
+  {
+    "id": 10,
+    "title": "Top Purchasing Countries",
+    "columns": [
+      "country",
+      "customerid"
+    ],
+    "description": "Identify the countries with the most customer IDs",
+    "request_sql": "SELECT country, COUNT(DISTINCT customerid) as num_customers FROM data GROUP BY country ORDER BY num_customers DESC LIMIT 10",
+    "suggested_chart": "pie"
+  }
+]
