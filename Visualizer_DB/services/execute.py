@@ -8,17 +8,17 @@ from DB_Save.controller.Minio_controller import POST_file_in_Minio
 from Visualizer_DB.services.fetch_save import load_db_config
 from DB_Save.Models_save.Minio_forma_save import Froma_Minio
 
-def load_visualizations_from_file(file_name: str):
-    current_dir = os.path.dirname(__file__)  
-    file_path = os.path.join(current_dir, "..", file_name)  
-    file_path = os.path.abspath(file_path)
+# def load_visualizations_from_file(file_name: str):
+#     current_dir = os.path.dirname(__file__)  
+#     file_path = os.path.join(current_dir, "..", file_name)  
+#     file_path = os.path.abspath(file_path)
 
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+#     with open(file_path, "r", encoding="utf-8") as f:
+#         return json.load(f)
 
-def save_visualizations_to_file(file_path: str, data: List[Dict]):
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+# def save_visualizations_to_file(file_path: str, data: List[Dict]):
+#     with open(file_path, "w", encoding="utf-8") as f:
+#         json.dump(data, f, indent=2, ensure_ascii=False)
 
 def execute_queries_and_store(
     visualizations: List[Dict],
@@ -43,6 +43,7 @@ def execute_queries_and_store(
         print(f" Erreur de connexion à PostgreSQL : {e}")
         return []
     id =0
+    visualizations_result = []
     for vis in visualizations:
         sql = vis.get("request_sql")
         if not sql:
@@ -50,10 +51,14 @@ def execute_queries_and_store(
             continue
 
         try:
+        # Try to execute and fetch query result
             cursor.execute(sql)
             columns = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
-
+        except Exception as e:
+            print(f"❌ Failed to execute/fetch SQL for ID={vis.get('id')}: {e}")
+            continue
+        try:
             df = pd.DataFrame(rows, columns=columns)
             id +=1
             # Convertir en CSV en mémoire
@@ -69,7 +74,7 @@ def execute_queries_and_store(
             # Ajout dans le dictionnaire JSON
             vis["result_url"] = file_url
             vis["Project_guid"] = project_guid
-
+            visualizations_result.append(vis)
             print(f"Résultat ID={vis.get('id')} enregistré à {file_url}")
 
         except Exception as e:
@@ -77,6 +82,6 @@ def execute_queries_and_store(
 
     cursor.close()
     conn.close()
-    return visualizations
+    return visualizations_result
 
 

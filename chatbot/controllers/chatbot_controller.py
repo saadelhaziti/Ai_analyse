@@ -13,11 +13,11 @@ async def chat_controller(chat_message: ChatMessage, guid_project: str, db: Sess
     
     return await chatbot_services.create_chat(chat_message, guid_project, db)
 
-async def get_conversation_controller(conversation_id: str):
-    if not conversation_id:
+async def get_conversation_controller(guid_project: str, db: Session = Depends(get_db)):
+    if not guid_project:
         raise HTTPException(status_code=400, detail="Conversation ID is required")
     
-    return await chatbot_services.get_conversation(conversation_id)
+    return await chatbot_services.get_conversation(guid_project, db)
 
 async def get_recent_conversations_controller():
     return await chatbot_services.get_recent_conversations()

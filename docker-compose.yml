@@ -1,4 +1,48 @@
+version: "3.9"
+
 services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:admin@db:5432/AI_agent
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+
+  create_db:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:admin@db:5432/AI_agent
+    volumes:
+      - .:/app
+    command: ["sh", "-c", "python wait_for_postgres.py db AI_agent postgres admin && python create_db.py"]
+
+  seed_dbinit:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:admin@db:5432/dbinit
+    volumes:
+      - .:/app
+    command: ["sh", "-c", "python wait_for_postgres.py db dbinit postgres admin && python retail_db/dbinit.py"]
+
   minio:
     image: minio/minio
     container_name: minio
@@ -33,6 +77,10 @@ services:
     depends_on:
       - elasticsearch
 
+
 volumes:
+  pgdata:
   minio_data:
   es_data:
+  ollama_models:
+
