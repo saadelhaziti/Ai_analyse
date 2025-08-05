@@ -56,7 +56,7 @@ def execute_queries_and_store(
             columns = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
         except Exception as e:
-            print(f"❌ Failed to execute/fetch SQL for ID={vis.get('id')}: {e}")
+            print(f"Failed to execute/fetch SQL for ID={vis.get('id')}: {e}")
             continue
         try:
             df = pd.DataFrame(rows, columns=columns)

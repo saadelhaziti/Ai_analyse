@@ -65,7 +65,7 @@ async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session
     
 
 
-@Save_API.get("/Get_from_Minio/{filename}")
+@Save_API.get("/Get_from_Minio/{filename:path}")
 async def get_file(filename: str):
     try:
         file_stream, content_type = Get_file_from_minio(filename)
