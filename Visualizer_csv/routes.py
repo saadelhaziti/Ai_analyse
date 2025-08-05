@@ -1,12 +1,21 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from Visualizer_csv.controller.controller_cleaner import clean_data
 from Visualizer_csv.controller.controller_analyst import analyze_controll
+from users.services.database import SessionLocal
+from sqlalchemy.orm import Session
 from Visualizer_csv.services.execution_sql import run_queries_to_minio
+from users.services.Project_Services import get_project
 from Visualizer_DB.services.elasticsearch import ElasticsearchInterface
 
 app = APIRouter()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.get("/cleaner")
 async def cleaner(input_path: str):
@@ -17,9 +26,12 @@ async def cleaner(input_path: str):
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": str(e)})
     return JSONResponse(content={"message": result})
+
 @app.get("/analyst/{project_guid}")
-def analyst(project_guid: str,csv_path: str):
+def analyst(project_guid: str,db: Session = Depends(get_db)):
     try:
+        proj = get_project(db, project_guid)
+        csv_path = proj.data_prute_url  # Assuming this is the path to the CSV file
         es = ElasticsearchInterface(index_name="visualizations")
         visualization = es.retrieve(project_guid)
         if visualization:
