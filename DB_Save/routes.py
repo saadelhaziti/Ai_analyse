@@ -6,6 +6,8 @@ from Visualizer_csv.controller.controller_cleaner import clean_data
 from Models.schema import DocumentModel
 from DB_Save.controller.controller_elasticSearch import save_document_controller, retrieve_documents_by_project_controller
 from sqlalchemy.orm import Session
+import io   
+import csv
 from DB_Save.Models_save.Minio import MinIOStorage
 from users.Models.schemas import ProjectCreate
 from users.services.database import SessionLocal
@@ -62,10 +64,37 @@ async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session
         return JSONResponse(status_code=400, content={"message": str(ve)})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": f"Upload failed: {str(e)}"})
-    
 
+#prepare the endpoint of csv file to jeso 
+@Save_API.get("/proxy_csv/{filename:path}")
+async def proxy_csv(filename: str):
+    try:
+        file_stream, _ = Get_file_from_minio(filename)
+        # Parse CSV content into a list of dictionaries
+        content = file_stream.read().decode("utf-8")
 
-@Save_API.get("/Get_from_Minio/{filename}")
+        reader = csv.DictReader(io.StringIO(content))
+        json_data = []
+        for row in reader:
+            parsed_row = {}
+            for k, v in row.items():
+                v = v.strip()
+                if v == "":
+                    parsed_row[k] = None
+                elif v.replace(".", "", 1).isdigit():
+                    parsed_row[k] = float(v) if "." in v else int(v)
+                else:
+                    parsed_row[k] = v
+            json_data.append(parsed_row)
+
+        return JSONResponse(content=json_data)
+
+    except e:
+        raise HTTPException(status_code=400, detail=f"Failed to fetch from MinIO: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"CSV parsing failed: {e}")
+
+@Save_API.get("/Get_from_Minio/{filename:path}")
 async def get_file(filename: str):
     try:
         file_stream, content_type = Get_file_from_minio(filename)

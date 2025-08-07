@@ -2,7 +2,7 @@ from DB_Save.Models_save.ElasticSearch import ElasticsearchStorage
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 
-def save_document_controller(document: dict, index_name: str = "documents"):
+def save_document_controller(document: dict, index_name: str = "visualizations"):
     try:
         es = ElasticsearchStorage(index_name=index_name)
         doc_id = es.save(document)
@@ -14,7 +14,7 @@ def save_document_controller(document: dict, index_name: str = "documents"):
         raise HTTPException(status_code=500, detail=f"Error indexing document: {str(e)}")
 
 
-def retrieve_documents_by_project_controller(project_name: str, index_name: str = "documents"):
+def retrieve_documents_by_project_controller(project_name: str, index_name: str = "visualizations"):
     try:
         es = ElasticsearchStorage(index_name=index_name)
         documents = es.search_by_project(project_name)
