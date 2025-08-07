@@ -54,12 +54,9 @@ Visit [http://localhost:8000/docs](http://localhost:8000/docs) for the interacti
 ```powershell
 docker build -t retail-chatbot-api .
 ```
-#### Run the container
-```powershell
-docker run -p 8000:8000 retail-chatbot-api
-```
 
-#### (Optional) Using Docker Compose
+
+####  Using Docker Compose
 If you have a `docker-compose.yml` for multi-service setup:
 ```powershell
 docker-compose up --build
@@ -69,18 +66,13 @@ docker-compose up --build
 - The chatbot connects to Ollama at `http://ollama:11434` (for Docker on Windows).
 - Configure other service endpoints as needed in your code or via environment variables.
 
-## Example Usage
-See `tests/prompt_loader.py` for a sample request to the Ollama API:
-```python
-import requests
-OLLAMA_HOST = "http://ollama:11434"
-payload = {"prompt": "Hello, world!"}
-response = requests.post(f"{OLLAMA_HOST}/api/generate", json=payload)
-print(response.json())
+
+### 6. MinIO Bucket Setup for Testing
+You need to create a bucket in MinIO named `test1` for the tests to run properly.
+This can be done via the MinIO web interface or using the MinIO client (`mc`).
+
+Example using MinIO client:
+```powershell
+mc mb myminio/test1
 ```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-MIT
+Replace `myminio` with your MinIO alias if different.
