@@ -51,7 +51,7 @@ Content: {content}
 """ 
 
     response = requests.post(
-        "http://host.docker.internal:11434/api/generate",  # Use Docker service name here
+        "http://ollama:11434/api/generate",  # Use Docker service name here
         json={"model": "mistral:7b", "prompt": prompt_template},
         stream=True
     )

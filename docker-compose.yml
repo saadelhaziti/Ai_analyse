@@ -15,7 +15,10 @@ services:
   app:
     build: .
     depends_on:
-      - db
+      db:
+        condition: service_started
+      ollama:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:admin@db:5432/AI_agent
     volumes:
@@ -77,10 +80,25 @@ services:
     depends_on:
       - elasticsearch
 
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile.ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/start_ollama.sh"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
 volumes:
   pgdata:
   minio_data:
   es_data:
   ollama_models:
-

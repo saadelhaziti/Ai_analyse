@@ -66,14 +66,14 @@ docker-compose up --build
 ```
 
 ### 5. Environment Variables
-- The chatbot connects to Ollama at `http://host.docker.internal:11434` (for Docker on Windows).
+- The chatbot connects to Ollama at `http://ollama:11434` (for Docker on Windows).
 - Configure other service endpoints as needed in your code or via environment variables.
 
 ## Example Usage
 See `tests/prompt_loader.py` for a sample request to the Ollama API:
 ```python
 import requests
-OLLAMA_HOST = "http://host.docker.internal:11434"
+OLLAMA_HOST = "http://ollama:11434"
 payload = {"prompt": "Hello, world!"}
 response = requests.post(f"{OLLAMA_HOST}/api/generate", json=payload)
 print(response.json())

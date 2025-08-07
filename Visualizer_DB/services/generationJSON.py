@@ -73,7 +73,7 @@ def generate_json_via_llm(schema_txt_path: str,  user_value: str) -> list:
 
     # hadi la partie dial openroute a si saad 
     response = requests.post(
-        "http://host.docker.internal:11434/api/generate",  # Use Docker service name here
+        "http://ollama:11434/api/generate",  # Use Docker service name here
         json={"model": "mistral:7b", "prompt": full_prompt},
         stream=True
     )

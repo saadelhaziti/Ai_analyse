@@ -9,7 +9,7 @@ def analyze_and_generate_charts(input_filename: str):
     variable_name = prepare_csv_prompt_input(input_filename)
     prompt = load_prompt("csv_analysis", variable_name)
     response = requests.post(
-        "http://host.docker.internal:11434/api/generate",  # Use Docker service name here
+        "http://ollama:11434/api/generate",  # Use Docker service name here
         json={"model": "mistral:7b", "prompt": prompt},
         stream=True
     )

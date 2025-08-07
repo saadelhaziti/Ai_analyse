@@ -25,7 +25,7 @@ class RetailRAG:
         self.embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-mpnet-base-v2"
         )
-        self.llm = OllamaLLM(model="mistral:7b", base_url="http://host.docker.internal:11434")
+        self.llm = OllamaLLM(model="mistral:7b", base_url="http://ollama:11434")
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True,
