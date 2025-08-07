@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from Visualizer_csv.services.execution_sql import run_queries_to_minio
 from users.services.Project_Services import get_project
 from Visualizer_DB.services.elasticsearch import ElasticsearchInterface
+from Models.recom import generate_recommendation
+
 
 app = APIRouter()
 
@@ -32,15 +34,12 @@ def analyst(project_guid: str,db: Session = Depends(get_db)):
     try:
         proj = get_project(db, project_guid)
         csv_path = proj.data_prute_url  # Assuming this is the path to the CSV file
-        es = ElasticsearchInterface(index_name="visualizations")
-        visualization = es.retrieve(project_guid)
-        if visualization:
-            return visualization
         charts = analyze_controll(csv_path)
         if not charts:
             raise ValueError("No charts generated from the analysis.")
         # Save charts to a JSON file
         charts_finale = run_queries_to_minio(csv_path, charts, project_guid)
+        generate_recommendation(project_guid, db)
         return charts_finale  # Let FastAPI handle the serialization
     except Exception as e:
         print(" Erreur interne :", str(e))

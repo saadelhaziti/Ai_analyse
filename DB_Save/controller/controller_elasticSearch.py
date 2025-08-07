@@ -18,11 +18,10 @@ def retrieve_documents_by_project_controller(project_name: str, index_name: str 
     try:
         es = ElasticsearchStorage(index_name=index_name)
         documents = es.search_by_project(project_name)
-        
         if not documents:
             raise HTTPException(status_code=404, detail=f"Aucun document trouvé pour le projet '{project_name}'.")
         
-        return {"results": documents}
+        return documents
     except HTTPException:
         raise
     except Exception as e:

@@ -15,6 +15,7 @@ from Visualizer_DB.services.execute import execute_queries_and_store
 from Visualizer_DB.services.elasticsearch import ElasticsearchInterface
 from Visualizer_DB.services.meta_data import meta_data
 from Visualizer_DB.controller.saveschemaMINIO import upload_prompt_to_minio
+from Models.recom import generate_recommendation
 
 app1 = APIRouter()
 
@@ -82,7 +83,7 @@ def generate_visualizations(guid_project: str,  db: Session = Depends(get_db)):
 
         for viz in results:
             es.save(viz)
-
+        generate_recommendation(guid_project, db)
         return results
         
     except Exception as e:

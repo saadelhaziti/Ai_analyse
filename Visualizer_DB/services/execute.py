@@ -74,8 +74,8 @@ def execute_queries_and_store(
             # Ajout dans le dictionnaire JSON
             vis["result_url"] = file_url
             vis["Project_guid"] = project_guid
+            vis["id"] = id
             visualizations_result.append(vis)
-            print(f"Résultat ID={vis.get('id')} enregistré à {file_url}")
 
         except Exception as e:
             print(f" Erreur SQL ID={vis.get('id')} : {e}")

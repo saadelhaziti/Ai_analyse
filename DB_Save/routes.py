@@ -14,7 +14,7 @@ from users.services.database import SessionLocal
 from users.controller.Project_controller import update_project_controller
 from users.services.Project_Services import get_project
 from Visualizer_csv.services.meta_data import meta_data
-
+import json
 Save_API = APIRouter()
 
 def get_db():
@@ -66,9 +66,13 @@ async def upload_file(guid_project: str,file: UploadFile = File(...),db: Session
         return JSONResponse(status_code=500, content={"message": f"Upload failed: {str(e)}"})
 
 #prepare the endpoint of csv file to jeso 
-@Save_API.get("/proxy_csv/{filename:path}")
+@Save_API.get("/Get_from_Minio/{filename:path}")
 async def proxy_csv(filename: str):
     try:
+        if filename.endswith('.json'):
+            file_stream, _ = Get_file_from_minio(filename)
+            result = file_stream.read().decode("utf-8")
+            return json.loads(result)
         file_stream, _ = Get_file_from_minio(filename)
         # Parse CSV content into a list of dictionaries
         content = file_stream.read().decode("utf-8")
@@ -94,16 +98,6 @@ async def proxy_csv(filename: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"CSV parsing failed: {e}")
 
-@Save_API.get("/Get_from_Minio/{filename:path}")
-async def get_file(filename: str):
-    try:
-        file_stream, content_type = Get_file_from_minio(filename)
-        return StreamingResponse(file_stream, media_type=content_type)
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="File not found in MinIO.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving file: {str(e)}")
-    
 
 
 
