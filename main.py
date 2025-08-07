@@ -6,10 +6,22 @@ from users.routes import Users as Users_router
 from users.Models.model import Base
 from users.services.database import engine
 from Visualizer_DB.routes import app1 as api_router1
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Auto Chart Generator API",
                 description="API for automatic data cleaning and chart generation from CSV files.",
                 version="1.0.0"
                 )
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 from chatbot.routes import Chat as Chat_router
 
 

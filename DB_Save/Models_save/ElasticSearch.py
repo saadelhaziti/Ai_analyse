@@ -22,7 +22,7 @@ class ElasticsearchStorage(StorageBackend):
         query = {
             "query": {
                 "match": {
-                    "projet": project_name
+                    "Project_guid": project_name
                 }
             }
         }

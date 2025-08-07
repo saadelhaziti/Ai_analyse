@@ -24,5 +24,4 @@ class ConversationInfo(BaseModel):
     message_count: int
 
 class ConversationResponse(BaseModel):
-    guid: str
     messages: List[ConversationMessage]

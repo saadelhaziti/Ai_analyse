@@ -39,12 +39,11 @@ def run_queries_to_minio(
                 file_url = POST_file_in_Minio(output_stream, output_filename, "text/csv")
 
                 prompt["result_url"] = file_url
-                prompt["project_guid"] = project_guid
+                prompt["Project_guid"] = project_guid
                 prompt["id"] = id
                 valid_prompts.append(prompt)
 
                 es.save(prompt)
-                print(f"Saved visualization: {prompt['title']} with ID {prompt['id']}")
             else:
                 print(f"Skipping '{prompt['title']}' – result has {len(result_df)} rows.")
                 continue
