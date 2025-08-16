@@ -9,9 +9,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Ignore local development files
-.env
-*.env
 
 # Ignore Git repo
 .git/

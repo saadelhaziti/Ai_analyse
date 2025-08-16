@@ -17,7 +17,7 @@ class MinIOStorage(StorageBackend):
     def __init__(self):
         self.s3 = boto3.client(
             "s3",
-            endpoint_url=f"http{'s' if MINIO_SECURE else ''}://{MINIO_ENDPOINT}",
+            endpoint_url=MINIO_ENDPOINT,
             aws_access_key_id=MINIO_ACCESS_KEY,
             aws_secret_access_key=MINIO_SECRET_KEY,
             config=Config(signature_version="s3v4"),
