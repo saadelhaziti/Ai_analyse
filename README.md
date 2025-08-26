@@ -5,9 +5,11 @@
 
 <img src="readmeai/assets/logos/purple.svg" width="30%" style="position: relative; top: 0; right: 0;" alt="Project Logo"/>
 
-# <code>❯ REPLACE-ME</code>
 
-<em></em>
+# AI Analyse Platform
+
+
+An advanced platform for retail data analysis, chatbot integration, and visualization using Python, Docker, MinIO, Elasticsearch, and Ollama.
 
 <!-- BADGES -->
 <!-- local repository, no metadata badges. -->
@@ -63,73 +65,31 @@
 
 ## Features
 
-<code>❯ REPLACE-ME</code>
+
+- Retail data analysis and visualization
+- Chatbot integration for interactive queries
+- Data storage with MinIO and Elasticsearch
+- LLM-powered CSV and SQL prompt generation
 
 ---
 
+
 ## Project Structure
 
-```sh
-└── /
-    ├── chatbot
-    │   ├── controllers
-    │   ├── routes.py
-    │   ├── schemas
-    │   └── services
-    ├── create_db.py
-    ├── DB_Save
-    │   ├── controller
-    │   ├── Models_save
-    │   └── routes.py
-    ├── docker-compose.yml
-    ├── Dockerfile
-    ├── Dockerfile.init_minio
-    ├── Dockerfile.ollama
-    ├── init.sql
-    ├── init_minio.py
-    ├── llm_engine
-    │   ├── prepare_csv_prompt.py
-    │   ├── prompt_loader.py
-    │   ├── prompt_registry.json
-    │   └── prompts
-    ├── main.py
-    ├── Models
-    │   ├── abstract.py
-    │   ├── db_credentials.py
-    │   ├── Interface.py
-    │   ├── recom.py
-    │   └── schema.py
-    ├── README.md
-    ├── requirements.txt
-    ├── retail_db
-    │   ├── categories.csv
-    │   ├── customers.csv
-    │   ├── dbinit.py
-    │   ├── order_items.csv
-    │   ├── orders.csv
-    │   ├── payment_methods.csv
-    │   ├── products.csv
-    │   └── reviews.csv
-    ├── start_ollama.sh
-    ├── users
-    │   ├── controller
-    │   ├── Models
-    │   ├── routes.py
-    │   └── services
-    ├── venv
-    │   ├── Lib
-    │   ├── pyvenv.cfg
-    │   └── Scripts
-    ├── Visualizer_csv
-    │   ├── controller
-    │   ├── routes.py
-    │   └── services
-    ├── Visualizer_DB
-    │   ├── controller
-    │   ├── db_credentials.json
-    │   ├── routes.py
-    │   └── services
-    └── wait_for_postgres.py
+```
+├── chatbot/              # Chatbot logic, routes, controllers, schemas, services
+├── DB_Save/              # Data saving logic for MinIO and Elasticsearch
+├── llm_engine/           # LLM prompt generation and registry
+├── Models/               # Data models and interfaces
+├── retail_db/            # Retail CSV data and DB initialization
+├── users/                # User management, routes, services
+├── Visualizer_csv/       # CSV analysis and visualization
+├── Visualizer_DB/        # DB visualization and save logic
+├── create_db.py          # DB creation script
+├── docker-compose.yml    # Docker orchestration
+├── Dockerfile*           # Docker build files
+├── requirements.txt      # Python dependencies
+├── main.py               # Main entrypoint
 ```
 
 ### Project Index
@@ -14899,68 +14859,50 @@ Build  from the source and intsall dependencies:
 	❯ pip install -r requirements.txt
 	```
 
+
 ### Usage
 
-Run the project with:
+**With Docker:**
+```sh
+docker-compose up --build
+```
 
-**Using [docker](https://www.docker.com/):**
+**With Python:**
 ```sh
-docker run -it {image_name}
+pip install -r requirements.txt
+python main.py
 ```
-**Using [pip](https://pypi.org/project/pip/):**
-```sh
-python {entrypoint}
-```
+
 
 ### Testing
 
- uses the {__test_framework__} test framework. Run the test suite with:
-
-**Using [pip](https://pypi.org/project/pip/):**
+Run tests with:
 ```sh
 pytest
 ```
 
 ---
 
+
 ## Roadmap
 
-- [X] **`Task 1`**: <strike>Implement feature one.</strike>
-- [ ] **`Task 2`**: Implement feature two.
-- [ ] **`Task 3`**: Implement feature three.
+- [X] Retail data analysis and visualization
+- [X] Chatbot integration
+- [X] MinIO and Elasticsearch support
+- [ ] Advanced LLM prompt features
+- [ ] Enhanced user management
 
 ---
 
+
 ## Contributing
 
-- **💬 [Join the Discussions](https://LOCAL///discussions)**: Share your insights, provide feedback, or ask questions.
-- **🐛 [Report Issues](https://LOCAL///issues)**: Submit bugs found or log feature requests for the `` project.
-- **💡 [Submit Pull Requests](https://LOCAL///blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
-
-<details closed>
-<summary>Contributing Guidelines</summary>
-
-1. **Fork the Repository**: Start by forking the project repository to your LOCAL account.
-2. **Clone Locally**: Clone the forked repository to your local machine using a git client.
-   ```sh
-   git clone .
-   ```
-3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
-   ```sh
-   git checkout -b new-feature-x
-   ```
-4. **Make Your Changes**: Develop and test your changes locally.
-5. **Commit Your Changes**: Commit with a clear message describing your updates.
-   ```sh
-   git commit -m 'Implemented new feature x.'
-   ```
-6. **Push to LOCAL**: Push the changes to your forked repository.
-   ```sh
-   git push origin new-feature-x
-   ```
-7. **Submit a Pull Request**: Create a PR against the original project repository. Clearly describe the changes and their motivations.
-8. **Review**: Once your PR is reviewed and approved, it will be merged into the main branch. Congratulations on your contribution!
-</details>
+1. Fork the repository
+2. Clone locally
+3. Create a new branch for your feature or fix
+4. Make and test your changes
+5. Commit and push
+6. Submit a pull request
 
 <details closed>
 <summary>Contributor Graph</summary>
@@ -14974,15 +14916,17 @@ pytest
 
 ---
 
+
 ## License
 
- is protected under the [LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+See the [LICENSE](LICENSE) file for details.
 
 ---
 
+
 ## Acknowledgments
 
-- Credit `contributors`, `inspiration`, `references`, etc.
+- Thanks to all contributors and referenced open-source projects.
 
 <div align="right">
 
