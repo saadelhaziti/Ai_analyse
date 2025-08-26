@@ -91,7 +91,7 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 ### Project Index
 
 <details open>
-	<summary><b><code>/</code></b></summary>
+	<summary><b><code>AI_ANALYSE</code></b></summary>
 	<!-- chatbot Submodule -->
 	<details>
 		<summary><b>chatbot</b></summary>
