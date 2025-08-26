@@ -263,7 +263,18 @@ services:
       - .env
     networks:
       - ai_net
-
+  waf:
+    image: owasp/modsecurity-crs:nginx
+    container_name: waf
+    ports:
+      - "8080:80"   # ton app sera dispo via http://localhost:8080
+    depends_on:
+      - app
+    environment:
+      - PROXY_PASS=http://app:8000
+    networks:
+      - ai_net
+      
 volumes:
   pgdata:
   minio_data:
