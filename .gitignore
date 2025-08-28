@@ -9,3 +9,6 @@ data/
 # ignore all log files
 venv/
 conversations.json
+
+# ignore all .copilot.json files
+.copilot.json
