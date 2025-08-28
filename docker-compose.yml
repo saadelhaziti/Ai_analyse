@@ -263,6 +263,56 @@ services:
       - .env
     networks:
       - ai_net
+  
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - ai_net
+
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file: [.env]
+    environment:
+      PYTHONPATH: /app
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes: [".:/app"]
+    working_dir: /app
+    command: >
+      sh -c "celery -A celery_app.celery_app worker --loglevel=INFO"
+    restart: unless-stopped
+    networks: [ai_net]
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file: [.env]
+    environment:
+      PYTHONPATH: /app
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes: [".:/app"]
+    working_dir: /app
+    command: >
+      sh -c "celery -A celery_app.celery_app beat --loglevel=INFO"
+    restart: unless-stopped
+    networks: [ai_net]
+
 
 volumes:
   pgdata:

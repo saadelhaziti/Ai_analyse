@@ -1,93 +1,15 @@
-from fastapi import APIRouter , Depends
-from fastapi.responses import JSONResponse
-from fastapi import HTTPException
-from DB_Save.Models_save.Minio_forma_save import Froma_Minio
-from Visualizer_DB.services.generateLLMprompt import generate_llm_prompt_from_credentials
+from fastapi import APIRouter, Depends
+from .tasks_DB.visualizer_DB import connect_db_task, generate_visualizations_task
 from Models.db_credentials import DBCredentials
-from Visualizer_DB.services.generationJSON import generate_json_via_llm
-import os
-from users.services.Project_Services import get_project
-from users.services.database import SessionLocal
-from users.Models.schemas import ProjectCreate
-from users.controller.Project_controller import update_project_controller
-from sqlalchemy.orm import Session
-from Visualizer_DB.services.execute import execute_queries_and_store
-from Visualizer_DB.services.elasticsearch import ElasticsearchInterface
-from Visualizer_DB.services.meta_data import meta_data
-from Visualizer_DB.controller.saveschemaMINIO import upload_prompt_to_minio
-from Models.recom import generate_recommendation
 
-app1 = APIRouter()
+router = APIRouter(prefix="/db", tags=["db"])
 
+@router.post("/connect/{guid_project}")
+def connect_db_async(guid_project: str, credentials: DBCredentials):
+    task = connect_db_task.delay(guid_project, credentials.dict())
+    return {"task_id": task.id, "status": "started"}
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-
-
-
-@app1.post("/connect/{guid_project}")
-def connect_db(guid_project: str, credentials: DBCredentials, db: Session = Depends(get_db)):
-    try:
-        proj = get_project(db, guid_project)
-        # 1. Générer le prompt
-        prompt = generate_llm_prompt_from_credentials(credentials.dict())
-
-        schema_path = f"{str(proj.guid_user)}/{guid_project}/schema.txt"
-        metadata_path = f"{str(proj.guid_user)}/{guid_project}/metadata.txt"
-        current_dir = os.path.dirname(__file__) 
-        db_config_path = os.path.abspath(os.path.join(current_dir, "db_credentials.json"))
-        file_url = upload_prompt_to_minio(prompt, schema_path)
-        print(f"Prompt uploaded to MinIO: {file_url}")
-        metadata_urls = meta_data(db_config_path,metadata_path, file_url)
-        update_payload = ProjectCreate(
-                guid_user=str(proj.guid_user),  # You can fetch or pass the actual user if needed
-                Project_name=proj.Project_name,
-                data_type=proj.data_type,  # Assuming you have a data_type field in your
-                data_url_clean=schema_path,
-                data_prute_url=proj.data_prute_url,
-                metadata_url=metadata_urls,
-            )
-        update_project_controller(guid_project, update_payload, db)
-        
-        return {
-            "message": "Prompt enregistré dans MinIO",
-            "file_url": file_url, 
-            "metadata": metadata_urls
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur : {str(e)}")
-
-@app1.get("/generate-JSON/{guid_project}")
-def generate_visualizations(guid_project: str,  db: Session = Depends(get_db)):
-    
-    try:
-        proj = get_project(db, guid_project)
-
-        result = generate_json_via_llm(
-            schema_txt_path=proj.data_url_clean,
-            user_value=guid_project
-        )
-        dir_path, _ = os.path.split(proj.data_url_clean)
-        current_dir = os.path.dirname(__file__)  
-        db_config_path = os.path.abspath(os.path.join(current_dir, "db_credentials.json"))
-        results = execute_queries_and_store(result, db_config_path, dir_path,guid_project)
-        # 2. Préparation indexation Elasticsearch
-        es = ElasticsearchInterface(index_name="visualizations")
-
-        for viz in results:
-            es.save(viz)
-        generate_recommendation(guid_project, db)
-        return results
-        
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+@router.get("/generate-JSON/{guid_project}")
+def generate_visualizations_async(guid_project: str):
+    task = generate_visualizations_task.delay(guid_project)
+    return {"task_id": task.id, "status": "started"}
