@@ -33,19 +33,23 @@ def generate_recommendation(project_guid : str, db: Session = Depends(get_db)):
     prompt_template =f"""
 You are a business intelligence assistant.
 
-Based on the following {data_type}, generate a **JSON list of useful recommendations**.
+Based on the following {data_type}, generate a **JSON list of useful recommendationsb[1-5]**.
 Each item must be a dictionary with a single key:
 - "recommendation": a clear sentence combining the action to take AND its purpose.
 
 Only respond with the JSON list, no additional text, explanations, or markdown code blocks (no ```).
 
 Here is an example of a valid response:
-
+output example:
 [
   {{ "recommendation": "Analyze sales by category to identify the most profitable ones." }},
   {{ "recommendation": "Study customer reviews to improve the products." }}
 ]
-
+Rules:
+- Return ONLY valid JSON.
+- No explanations, no markdown, no text before or after JSON.
+- Do NOT include trailing commas.
+- Do NOT include comments.
 ### info:
 Content: {content}
 """ 
