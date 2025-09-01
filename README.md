@@ -3,9 +3,6 @@
 <!-- HEADER STYLE: CLASSIC -->
 <div align="center">
 
-<img src="readmeai/assets/logos/purple.svg" width="30%" style="position: relative; top: 0; right: 0;" alt="Project Logo"/>
-
-
 # AI Analyse Platform
 
 
@@ -18,20 +15,13 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 
 <img src="https://img.shields.io/badge/JSON-000000.svg?style=default&logo=JSON&logoColor=white" alt="JSON">
 <img src="https://img.shields.io/badge/Ollama-000000.svg?style=default&logo=Ollama&logoColor=white" alt="Ollama">
-<img src="https://img.shields.io/badge/BSD-AB2B28.svg?style=default&logo=BSD&logoColor=white" alt="BSD">
-<img src="https://img.shields.io/badge/TOML-9C4121.svg?style=default&logo=TOML&logoColor=white" alt="TOML">
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=default&logo=JavaScript&logoColor=black" alt="JavaScript">
-<img src="https://img.shields.io/badge/GNU%20Bash-4EAA25.svg?style=default&logo=GNU-Bash&logoColor=white" alt="GNU%20Bash">
 <img src="https://img.shields.io/badge/Elasticsearch-005571.svg?style=default&logo=Elasticsearch&logoColor=white" alt="Elasticsearch">
 <img src="https://img.shields.io/badge/Kibana-005571.svg?style=default&logo=Kibana&logoColor=white" alt="Kibana">
 <br>
 <img src="https://img.shields.io/badge/Docker-2496ED.svg?style=default&logo=Docker&logoColor=white" alt="Docker">
-<img src="https://img.shields.io/badge/XML-005FAD.svg?style=default&logo=XML&logoColor=white" alt="XML">
 <img src="https://img.shields.io/badge/Python-3776AB.svg?style=default&logo=Python&logoColor=white" alt="Python">
-<img src="https://img.shields.io/badge/bat-31369E.svg?style=default&logo=bat&logoColor=white" alt="bat">
 <img src="https://img.shields.io/badge/MinIO-C72E49.svg?style=default&logo=MinIO&logoColor=white" alt="MinIO">
 <img src="https://img.shields.io/badge/Apache-D22128.svg?style=default&logo=Apache&logoColor=white" alt="Apache">
-<img src="https://img.shields.io/badge/YAML-CB171E.svg?style=default&logo=YAML&logoColor=white" alt="YAML">
 
 </div>
 <br>
@@ -49,27 +39,30 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
     - [Usage](#usage)
-    - [Testing](#testing)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+
 
 ---
-
 ## Overview
 
+This project aims to **automate the generation of interactive dashboards** from raw data.  
+The goal is to provide an intelligent solution that enables:  
 
+- **Automatic data analysis** through the integration of advanced models (LLMs and search engines).  
+- **Dynamic visualization generation** (charts, tables, key indicators) without complex manual configuration.  
+- **Connection to various data sources** (JSON, Elasticsearch, MinIO, etc.).  
+- **Customization and adaptation** of dashboards based on business needs and use cases.  
+- **Real-time monitoring and supervision** using tools like Kibana and Elasticsearch.  
+
+In summary, this project delivers a **powerful and automated tool** that reduces the time required to build and deploy dashboards while improving data accessibility and interpretation.
 
 ---
 
-## Features
+##  Features
 
-
-- Retail data analysis and visualization
-- Chatbot integration for interactive queries
-- Data storage with MinIO and Elasticsearch
-- LLM-powered CSV and SQL prompt generation
+- **Flexible dashboards** – ability to dynamically change the type and style of generated dashboards.  
+- **Voice-enabled chatbot** – an intelligent assistant capable of communicating in **audio** for greater interactivity.  
+- **Enhanced security layer** – integration of advanced security mechanisms to protect data and access.  
+- **LLM-powered data interaction** – automatic generation of **CSV and SQL queries** from natural language prompts.
 
 ---
 
@@ -92,70 +85,57 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 ├── main.py               # Main entrypoint
 ```
 
-### Project Index
+
+## Clone the Project
+
+To get started, first clone the repository to your local machine:
+
+```bash
+git clone https://github.com/saadelhaziti/Ai_analyse.git
+```
+##  Execution
+
+You can run the project in two different ways:
+
+### 1. Run with Docker (Recommended)
+
+Make sure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/) installed.
+
+```bash
+# Build the containers
+docker-compose build
+
+# Start the containers
+docker-compose up -d
+
+# Check running containers
+docker ps
+#To stop all containers:
+docker-compose down
+```
+### 2. Run Locally with FastAPI
+
+Make sure you have **Python 3.11+** and **pip** installed.
+
+```bash
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate   # On Linux/Mac
+venv\Scripts\activate      # On Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+#Run the FastAPI application:
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+```
+
+
+## Project Index
 
 <details open>
-	<summary><b><code>/</code></b></summary>
-	<!-- __root__ Submodule -->
-	<details>
-		<summary><b>__root__</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ __root__</b></code>
-			<table style='width: 100%; border-collapse: collapse;'>
-			<thead>
-				<tr style='background-color: #f8f9fa;'>
-					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-					<th style='text-align: left; padding: 8px;'>Summary</th>
-				</tr>
-			</thead>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/create_db.py'>create_db.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/docker-compose.yml'>docker-compose.yml</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Dockerfile'>Dockerfile</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Dockerfile.init_minio'>Dockerfile.init_minio</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Dockerfile.ollama'>Dockerfile.ollama</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/init.sql'>init.sql</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/init_minio.py'>init_minio.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/main.py'>main.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/requirements.txt'>requirements.txt</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/start_ollama.sh'>start_ollama.sh</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/wait_for_postgres.py'>wait_for_postgres.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-			</table>
-		</blockquote>
-	</details>
+	<summary><b><code>AI_ANALYSE</code></b></summary>
 	<!-- chatbot Submodule -->
 	<details>
 		<summary><b>chatbot</b></summary>
@@ -171,105 +151,39 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 			</thead>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='/chatbot/routes.py'>routes.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
+					<td style='padding: 8px;'>The chatbot leverages the database schema and metadata to provide accurate and context-aware responses. It relies on a Retrieval-Augmented Generation (RAG) system, which allows it to fetch relevant information from the schema and metadata before generating answers. This ensures that the responses are not only coherent but also aligned with the underlying data structure, making the interaction more reliable and informative.  </code></td>
 				</tr>
 			</table>
-			<!-- controllers Submodule -->
-			<details>
-				<summary><b>controllers</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ chatbot.controllers</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/chatbot/controllers/chatbot_controller.py'>chatbot_controller.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
+			</blockquote>
 			</details>
-			<!-- schemas Submodule -->
-			<details>
-				<summary><b>schemas</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ chatbot.schemas</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/chatbot/schemas/chat_schema.py'>chat_schema.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- services Submodule -->
-			<details>
-				<summary><b>services</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ chatbot.services</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/chatbot/services/chatbot_services.py'>chatbot_services.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/chatbot/services/chat_manager.py'>chat_manager.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/chatbot/services/retail_rag.py'>retail_rag.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-					<!-- retail_data_store Submodule -->
-					<details>
-						<summary><b>retail_data_store</b></summary>
-						<blockquote>
-							<div class='directory-path' style='padding: 8px 0; color: #666;'>
-								<code><b>⦿ chatbot.services.retail_data_store</b></code>
-							<table style='width: 100%; border-collapse: collapse;'>
-							<thead>
-								<tr style='background-color: #f8f9fa;'>
-									<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-									<th style='text-align: left; padding: 8px;'>Summary</th>
-								</tr>
-							</thead>
-								<tr style='border-bottom: 1px solid #eee;'>
-									<td style='padding: 8px;'><b><a href='/chatbot/services/retail_data_store/retail_faiss_index.faiss'>retail_faiss_index.faiss</a></b></td>
-									<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-								</tr>
-							</table>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
+		</blockquote>
+	</details>
+	<!-- users Submodule -->
+	<details>
+		<summary><b>Visualizer_csv</b></summary>
+		<blockquote>
+			<div class='directory-path' style='padding: 8px 0; color: #666;'>
+				<code><b>⦿ Visualizer_csv</b></code>
+			<table style='width: 100%; border-collapse: collapse;'>
+			<thead>
+				<tr style='background-color: #f8f9fa;'>
+					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
+					<th style='text-align: left; padding: 8px;'>Summary</th>
+				</tr>
+			</thead>
+				<tr style='border-bottom: 1px solid #eee;'>
+					<td style='padding: 8px;'><b><a href='/users/routes.py'>routes.py</a></b></td>
+					<td style='padding: 8px;'>The application allows users to upload files from their local computer, which are then processed and provided to the LLMs. Based on this input, the system leverages the LLMs to automatically generate dashboards, transforming raw data into meaningful and interactive visualizations.</code></td>
+				</tr>
+			</table>
 		</blockquote>
 	</details>
 	<!-- DB_Save Submodule -->
 	<details>
-		<summary><b>DB_Save</b></summary>
+		<summary><b>Visualizer_DB</b></summary>
 		<blockquote>
 			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ DB_Save</b></code>
+				<code><b>⦿ Visualizer_DB</b></code>
 			<table style='width: 100%; border-collapse: collapse;'>
 			<thead>
 				<tr style='background-color: #f8f9fa;'>
@@ -279,65 +193,9 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 			</thead>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='/DB_Save/routes.py'>routes.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
+					<td style='padding: 8px;'>The application connects directly to databases, extracting both raw data and schema information. This structured input is then provided to the LLMs, which automatically generate dashboards by translating the database content into meaningful and interactive visualizations.</code></td>
 				</tr>
 			</table>
-			<!-- controller Submodule -->
-			<details>
-				<summary><b>controller</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ DB_Save.controller</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/DB_Save/controller/controller_elasticSearch.py'>controller_elasticSearch.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/DB_Save/controller/Minio_controller.py'>Minio_controller.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- Models_save Submodule -->
-			<details>
-				<summary><b>Models_save</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ DB_Save.Models_save</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/DB_Save/Models_save/ElasticSearch.py'>ElasticSearch.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/DB_Save/Models_save/Minio.py'>Minio.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/DB_Save/Models_save/minio_config.py'>minio_config.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/DB_Save/Models_save/Minio_forma_save.py'>Minio_forma_save.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
 		</blockquote>
 	</details>
 	<!-- llm_engine Submodule -->
@@ -354,42 +212,11 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 				</tr>
 			</thead>
 				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/llm_engine/prepare_csv_prompt.py'>prepare_csv_prompt.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='/llm_engine/prompt_loader.py'>prompt_loader.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/llm_engine/prompt_registry.json'>prompt_registry.json</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
+					<td style='padding: 8px;'>In this part, the LLM takes the schema from either a database or a CSV file and then generates the dashboard in the form of a structured JSON file.</code></td>
 				</tr>
 			</table>
 			<!-- prompts Submodule -->
-			<details>
-				<summary><b>prompts</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ llm_engine.prompts</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/llm_engine/prompts/csv_analysis.j2'>csv_analysis.j2</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/llm_engine/prompts/sql_analysis.j2'>sql_analysis.j2</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
 		</blockquote>
 	</details>
 	<!-- Models Submodule -->
@@ -407,145 +234,12 @@ An advanced platform for retail data analysis, chatbot integration, and visualiz
 			</thead>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='/Models/abstract.py'>abstract.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Models/db_credentials.py'>db_credentials.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Models/Interface.py'>Interface.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Models/recom.py'>recom.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/Models/schema.py'>schema.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
+					<td style='padding: 8px;'>For the selection of LLMs, we rely on four main evaluation criteria: 
+					Query generation time – how quickly the model produces SQL queries.Cosine similarity – measuring the semantic similarity between generated and reference queries.
+					Number of executed queries – evaluating the proportion of generated queries that can be successfully executed.
+					CSV file comparison – validating results by comparing outputs against ground truth CSV files.</code></td>
 				</tr>
 			</table>
-		</blockquote>
-	</details>
-	<!-- retail_db Submodule -->
-	<details>
-		<summary><b>retail_db</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ retail_db</b></code>
-			<table style='width: 100%; border-collapse: collapse;'>
-			<thead>
-				<tr style='background-color: #f8f9fa;'>
-					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-					<th style='text-align: left; padding: 8px;'>Summary</th>
-				</tr>
-			</thead>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/retail_db/dbinit.py'>dbinit.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-			</table>
-		</blockquote>
-	</details>
-	<!-- users Submodule -->
-	<details>
-		<summary><b>users</b></summary>
-		<blockquote>
-			<div class='directory-path' style='padding: 8px 0; color: #666;'>
-				<code><b>⦿ users</b></code>
-			<table style='width: 100%; border-collapse: collapse;'>
-			<thead>
-				<tr style='background-color: #f8f9fa;'>
-					<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-					<th style='text-align: left; padding: 8px;'>Summary</th>
-				</tr>
-			</thead>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='/users/routes.py'>routes.py</a></b></td>
-					<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-				</tr>
-			</table>
-			<!-- controller Submodule -->
-			<details>
-				<summary><b>controller</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ users.controller</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/controller/Project_controller.py'>Project_controller.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/controller/User_controller.py'>User_controller.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- Models Submodule -->
-			<details>
-				<summary><b>Models</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ users.Models</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/Models/model.py'>model.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/Models/schemas.py'>schemas.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
-			<!-- services Submodule -->
-			<details>
-				<summary><b>services</b></summary>
-				<blockquote>
-					<div class='directory-path' style='padding: 8px 0; color: #666;'>
-						<code><b>⦿ users.services</b></code>
-					<table style='width: 100%; border-collapse: collapse;'>
-					<thead>
-						<tr style='background-color: #f8f9fa;'>
-							<th style='width: 30%; text-align: left; padding: 8px;'>File Name</th>
-							<th style='text-align: left; padding: 8px;'>Summary</th>
-						</tr>
-					</thead>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/services/database.py'>database.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/services/Project_Services.py'>Project_Services.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/services/security.py'>security.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-						<tr style='border-bottom: 1px solid #eee;'>
-							<td style='padding: 8px;'><b><a href='/users/services/User_Services.py'>User_Services.py</a></b></td>
-							<td style='padding: 8px;'>Code>❯ REPLACE-ME</code></td>
-						</tr>
-					</table>
-				</blockquote>
-			</details>
 		</blockquote>
 	</details>
 	<!-- venv Submodule -->

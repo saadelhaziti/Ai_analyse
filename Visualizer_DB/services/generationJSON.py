@@ -33,7 +33,7 @@ Guidelines:
 
 Format:
 Return only valid JSON in the following structure — no extra explanation, markdown, or text:
-
+output example:
 [
   {
     "id": 1,
